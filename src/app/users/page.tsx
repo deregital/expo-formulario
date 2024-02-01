@@ -1,11 +1,11 @@
 'use client';
-import { trpc } from '@/utils/trpc';
+import { trpc } from '@/lib/trpc';
 import React from 'react';
 
 interface UserPageProps {}
 
 const UserPage = ({}: UserPageProps) => {
-  const { data } = trpc.user.getAll.useQuery();
+  const { data, isLoading } = trpc.user.getAll.useQuery();
   const addUser = trpc.user.add.useMutation();
   const trpcUtils = trpc.useUtils();
 
@@ -19,13 +19,17 @@ const UserPage = ({}: UserPageProps) => {
   }
 
   return (
-    <div className="p-2">
-      {data?.map((user) => (
-        <div key={user.id}>
-          <h1>{user.name}</h1>
-          <p>{user.email}</p>
-        </div>
-      ))}
+    <div className="p-2 text-white">
+      {isLoading ? (
+        <>Cargando...</>
+      ) : (
+        data?.map((user) => (
+          <div key={user.id}>
+            <h1>{user.name}</h1>
+            <p>{user.email}</p>
+          </div>
+        ))
+      )}
 
       <form
         onSubmit={handleSubmit}
@@ -33,11 +37,9 @@ const UserPage = ({}: UserPageProps) => {
       >
         <input type="text" name="name" placeholder="Nombre" />
         <input type="email" name="email" placeholder="Email" />
-        <input
-          type="submit"
-          value="Add User"
-          className="bg-red-500 px-2 py-1"
-        />
+        <button type="submit" value="Add User" className="bg-red-500 px-2 py-1">
+          Submit
+        </button>
       </form>
     </div>
   );
