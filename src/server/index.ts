@@ -18,12 +18,12 @@ export const appRouter = router({
     }),
   user: router({
     getAll: publicProcedure.query(async () => {
-      return await prisma.user.findMany();
+      return await prisma.cuenta.findMany();
     }),
     add: publicProcedure
-      .input(z.object({ name: z.string(), email: z.string().email() }))
+      .input(z.object({ nombreUsuario: z.string(), contrasena: z.string() }))
       .mutation(async ({ input }) => {
-        return await prisma.user.create({ data: input });
+        return await prisma.cuenta.create({ data: input });
       }),
   }),
 });

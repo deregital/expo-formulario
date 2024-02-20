@@ -5,7 +5,7 @@ import { trpc } from '@/lib/trpc';
 import Link from 'next/link';
 
 export default function Home() {
-  const { data, isLoading } = trpc.hello.useQuery({
+  const { data, isLoading} = trpc.hello.useQuery({
     text: 'world',
   });
   return (
@@ -24,3 +24,5 @@ export default function Home() {
     </main>
   );
 }
+
+
