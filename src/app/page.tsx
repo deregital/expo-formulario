@@ -30,13 +30,13 @@ const Home: React.FC = () => {
       </div>
 
       <div className={styles.header}>
-        <h1>¿Querés desfilar?</h1>
+        <h1><i>¿Querés desfilar?</i></h1>
       </div>
     
       <div className={styles.subtitle}>
-        <p style={{ marginBottom: '10px' }}>En Expo Desfiles tenemos la oportunidad que estabas esperando.</p>
-        <p style={{ marginBottom: '10px' }}>Vas a recibir entrenamientos y vas a poder desfilar ¡GRATIS!</p>
-        <p>¿Te interesa? ¡Rellena estos datos para participar!</p>
+        <p style={{ marginBottom: '10px', fontStyle: 'italic' }}>En Expo Desfiles tenemos la oportunidad que estabas esperando.</p>
+        <p style={{ marginBottom: '10px', fontStyle: 'italic' }}>Vas a recibir entrenamientos y vas a poder desfilar ¡GRATIS!</p>
+        <p style={{ fontStyle: 'italic' }}>¿Te interesa? ¡Rellena estos datos para participar!</p>
       </div>
 
       <div className={styles.form}>
@@ -45,6 +45,7 @@ const Home: React.FC = () => {
             <input type="text" id="nombreApellido" name="nombreApellido" placeholder="Nombre/s y Apellido/s" className={styles.inputField} />
           </div>
           <div className={styles.inputGroup}>
+          <input type="text" id="codigoArea" name="codigoArea" placeholder="CodArea" className={styles.inputFieldSmall} />
             <input type="text" id="numeroTelefono" name="numeroTelefono" placeholder="Número de Teléfono" className={styles.inputField} />
           </div>
           <div className={styles.buttonContainer}>

@@ -26,7 +26,7 @@
 }
 
 .subtitle p {
-  margin-bottom: 10px; /* Ajusta el valor según sea necesario para acercar los párrafos */
+  margin-bottom: 10px; 
 }
 
 .form {
@@ -41,7 +41,18 @@
 
 
 .inputField {
-  width: 100%;
+  width: 110%;
+  padding: 20px; 
+  border-radius: 10px;
+  border: 2px solid #ccc; 
+  text-align: center; 
+  font-size: 16px; 
+}
+
+  
+
+.inputFieldSmall {
+  width: 50%;
   padding: 20px; 
   border-radius: 10px;
   border: 2px solid #ccc; 
@@ -51,7 +62,9 @@
 
 .inputGroup {
   margin-bottom: 10px; 
+  display: flex;
 }
+
 
 .submitButton {
   width: 100%;
@@ -72,7 +85,7 @@
   display: flex;
   justify-content: center;
   text-align: center;
-  margin-left: 50px;
+  margin-left: 0px;
 }
 
 .successMessage {
@@ -81,5 +94,6 @@
   font-size: 18px; /* Tamaño de fuente más grande */
   font-weight: bold; /* Negrita */
   color: green; /* Color del texto */
-  margin-left: 50px;
+  margin-left: 0px;
 }
+
