@@ -7,10 +7,16 @@ import styles from './styles.module.css';
 import Head from 'next/head';
 import Image from 'next/image';
 import { title } from 'process';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 import React, { useState } from 'react';
+
+
 
 const Home: React.FC = () => {
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [value, setValue] = useState<string | undefined>('');
+
   
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -44,22 +50,39 @@ const Home: React.FC = () => {
           <div className={styles.inputGroup}>
             <input type="text" id="nombreApellido" name="nombreApellido" placeholder="Nombre/s y Apellido/s" className={styles.inputField} />
           </div>
+
           <div className={styles.inputGroup}>
-          <input type="text" id="codigoArea" name="codigoArea" placeholder="CodArea" className={styles.inputFieldSmall} />
-            <input type="text" id="numeroTelefono" name="numeroTelefono" placeholder="Número de Teléfono" className={styles.inputField} />
+          <PhoneInput
+              placeholder="Número de Teléfono"
+              international
+              value={value}
+              onChange={setValue}
+              defaultCountry= "AR"
+              className={styles.inputField}
+              countryCallingCodeEditable={false}
+              displayInitialValueAsLocalNumber
+            />
           </div>
           <div className={styles.buttonContainer}>
             <button type="submit" className={styles.submitButton}>ENVIAR</button>
           </div>
-          {formSubmitted && <p className={styles.successMessage}>Los datos han sido enviados correctamente</p>}
-        </form>
-        
+          {formSubmitted && <p className={styles.successMessage}>Los datos han sido enviados correctamente, en unos minutos le llegara un mensaje a su WhatssApp. Si no le ha llegado, envie de vuelta sus datos...</p>}
+        </form> 
       </div>
+      <div className={styles.bottomContent}>
+        <div className={styles.helpImageContainer}>
+          <Image src="/images/signoPregunta.jpg" alt="Imagen de ayuda" width={50} height={50} />
+          <div className={styles.helpText}>Ayuda</div>
+          <div className={styles.hoverText}>Para enviar su número de teléfono correctamente deberá seleccionar el país en el que está registrado y luego su prefijo SIN espacios, guiones o el número 9. Por ejemplo, un número que es de Capital, ingresaría “1108001234”, o si es de La Plata ingresaría “2217654321”.</div> {/* Agregar esta línea */}
+    </div>
+    </div>
     </div>
   );
 };
 
 export default Home;
+
+
 
 
 

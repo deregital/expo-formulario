@@ -51,14 +51,6 @@
 
   
 
-.inputFieldSmall {
-  width: 50%;
-  padding: 20px; 
-  border-radius: 10px;
-  border: 2px solid #ccc; 
-  text-align: center; 
-  font-size: 16px; 
-}
 
 .inputGroup {
   margin-bottom: 10px; 
@@ -95,5 +87,47 @@
   font-weight: bold; /* Negrita */
   color: green; /* Color del texto */
   margin-left: 0px;
+}
+
+.bottomContent {
+  position: relative; /* Asegura que el contenido dentro de este div se posicione relativo a él */
+  margin-top: 20px; /* Ajusta el margen superior según sea necesario */
+}
+
+.helpImageContainer {
+  position: relative;
+  bottom: -40px;
+  left: 0;
+  display: flex;
+  align-items: center;
+  height: auto;
+
+}
+
+.helpImageContainer img {
+  width: 50px; /* Ajusta el tamaño de la imagen según sea necesario */
+  height: auto;
+}
+
+.helpText {
+  margin-left: 5px;
+  font-style: italic; /* Ajusta el margen entre la imagen y el texto según sea necesario */
+}
+
+.helpImageContainer .hoverText {
+  position: absolute;
+  bottom: -20px; /* Ajusta la posición según sea necesario */
+  left: 50%; /* Ajusta la posición según sea necesario */
+  transform: translateX(-50%); /* Centrar horizontalmente */
+  background-color: rgba(73, 71, 71, 0.7); /* Color de fondo */
+  color: #fff; /* Color del texto */
+  padding: 5px 10px; /* Espaciado interior */
+  border-radius: 5px; /* Bordes redondeados */
+  opacity: 0; /* Inicialmente oculto */
+  transition: opacity 0.3s ease; /* Efecto de transición */
+}
+
+.helpImageContainer:hover .hoverText {
+  opacity: 1; /* Mostrar en hover */
 }
 
