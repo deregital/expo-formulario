@@ -19,6 +19,10 @@ const Home: React.FC = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // agarrar nombre y telefono del form
+    const nombre = event.currentTarget.nombreApellido.value;
+    const telefono = event.currentTarget.telefono.value;
+    crearModelo({nombre,telefono});
+
 
     // llamar a la funcion de trpc
 
@@ -115,5 +119,6 @@ const Home: React.FC = () => {
     </div>
   );
 };
+
 
 export default Home;
