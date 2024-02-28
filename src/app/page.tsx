@@ -24,11 +24,18 @@ const Home: React.FC = () => {
     crearModelo({nombre,telefono});
 
 
+
     // llamar a la funcion de trpc
+
 
     setFormSubmitted(true);
     console.log('Formulario enviado');
+    if (error && error.data && error.data.code === "CONFLICT") {
+      console.error('Error al crear perfil:', error);
+    }
   };
+
+  const telefonoExistente = error && error.data && error.data.code === 'CONFLICT';
   return (
     <div>
       <Head>
@@ -88,7 +95,12 @@ const Home: React.FC = () => {
               ENVIAR
             </button>
           </div>
-          {formSubmitted && (
+          {telefonoExistente && (
+            <p className={styles.errorMessage}>
+              {error.message}
+            </p>
+          )}
+          {formSubmitted && !telefonoExistente && !error && (
             <p className={styles.successMessage}>
               Los datos han sido enviados correctamente, en unos minutos le
               llegara un mensaje a su WhatssApp. Si no le ha llegado, envie de
@@ -108,8 +120,8 @@ const Home: React.FC = () => {
           <div className={styles.helpText}>Ayuda</div>
           <div className={styles.hoverText}>
             Para enviar su número de teléfono correctamente deberá seleccionar
-            el país en el que está registrado y luego su prefijo SIN espacios,
-            guiones o el número 9. Por ejemplo, un número que es de Capital,
+            el país en el que está registrado y luego su prefijo.
+            Por ejemplo, un número que es de Capital,
             ingresaría “1108001234”, o si es de La Plata ingresaría
             “2217654321”.
           </div>{' '}
