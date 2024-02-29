@@ -35,6 +35,7 @@ export const appRouter = router({
             nombreCompleto: input.nombre,
             telefono: telefonoSinSeparaciones,
             nombrePila: nombrePila,
+            etiquetas: {connect: {id:process.env.MODELO_ETIQUETA_ID}}
           },
         });
       }),

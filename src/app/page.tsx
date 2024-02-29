@@ -14,7 +14,7 @@ import React, { useState } from 'react';
 const Home: React.FC = () => {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [value, setValue] = useState<string | undefined>('');
-  const { mutate: crearModelo, error } = trpc.perfil.create.useMutation();
+  const { mutate: crearModelo, error, status } = trpc.perfil.create.useMutation();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -95,12 +95,12 @@ const Home: React.FC = () => {
               ENVIAR
             </button>
           </div>
-          {telefonoExistente && (
+          {status==="error" && (
             <p className={styles.errorMessage}>
               {error.message}
             </p>
           )}
-          {formSubmitted && !telefonoExistente && !error && (
+          {status==="success" && (
             <p className={styles.successMessage}>
               Los datos han sido enviados correctamente, en unos minutos le
               llegara un mensaje a su WhatssApp. Si no le ha llegado, envie de
