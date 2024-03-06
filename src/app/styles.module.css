@@ -1,0 +1,91 @@
+
+.header {
+  text-align: center;
+  padding: 50px 0;
+}
+
+.header h1 {
+  font-size: 68px;
+  font-weight: bold;
+  margin-top: -10px;
+}
+
+.brownBar {
+  background-color: rgb(214, 214, 214);
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 2px solid black;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 26px;
+  margin-top: -90px;
+}
+
+.subtitle p {
+  margin-bottom: 10px;
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  padding-bottom: 80px;
+}
+
+.form form {
+  width: 300px;
+}
+
+.inputField {
+  width: 110%;
+  padding: 20px;
+  border-radius: 10px;
+  border: 2px solid #ccc;
+  text-align: center;
+  font-size: 16px;
+}
+
+.inputGroup {
+  margin-bottom: 10px;
+  display: flex;
+}
+
+.submitButton {
+  width: 70%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.submitButton:hover {
+  background-color: #0056b3;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  margin-left: 0px;
+  gap: 10px;
+}
+
+.successMessage {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: green;
+  margin-left: 0px;
+}
+
+
+
+

@@ -1,29 +1,43 @@
 import { z } from 'zod';
 import { publicProcedure, router } from './trpc';
 import { prisma } from '@/server/db';
+import { TRPCError } from '@trpc/server';
 
 export const appRouter = router({
-  hello: publicProcedure
-    .input(
-      z
-        .object({
-          text: z.string(),
-        })
-        .optional()
-    )
-    .query(async ({ input }) => {
-      return {
-        greeting: `Hello, ${input?.text ?? 'World'}!`,
-      };
-    }),
-  user: router({
-    getAll: publicProcedure.query(async () => {
-      return await prisma.cuenta.findMany();
-    }),
-    add: publicProcedure
-      .input(z.object({ nombreUsuario: z.string(), contrasena: z.string() }))
+  perfil: router({
+    create: publicProcedure
+      .input(z.object({ nombre: z.string(), telefono: z.string() }))
       .mutation(async ({ input }) => {
-        return await prisma.cuenta.create({ data: input });
+
+        const telefonoSinSeparaciones = input.telefono.replace(/\s+/g, '').replace(/\+/g, '');
+        
+
+        const telefonoExistente = await prisma.perfil.findFirst({
+          where: {
+            telefono: telefonoSinSeparaciones,
+          },
+        });
+
+        if (telefonoExistente) {
+          throw new TRPCError({
+            code: 'CONFLICT',
+            message: 'El número de teléfono ya existe en el registro.',
+          });
+        }
+
+        const nombrePila = input.nombre.split(' ')[0];
+
+        
+      
+
+        await prisma.perfil.create({
+          data: {
+            nombreCompleto: input.nombre,
+            telefono: telefonoSinSeparaciones,
+            nombrePila: nombrePila,
+            etiquetas: {connect: {id:process.env.MODELO_ETIQUETA_ID}}
+          },
+        });
       }),
   }),
 });
