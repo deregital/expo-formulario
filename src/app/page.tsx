@@ -100,28 +100,13 @@ const Home: React.FC = () => {
             <p className={styles.successMessage}>
               Los datos han sido enviados correctamente, en unos minutos le
               llegara un mensaje a su WhatssApp. Si no le ha llegado, envie de
-              vuelta sus datos...
+              vuelta sus datos, seleccionando correctamente el país en el que está registrado
+               y luego su prefijo.
             </p>
           )}
         </form>
       </div>
-      <div id="bottom-content" className={styles.bottomContent}>
-        <div className={styles.helpImageContainer}>
-          <Image
-            src="/images/signoPregunta.jpg"
-            alt="Imagen de ayuda"
-            width={50}
-            height={50}
-          />
-          <div className={styles.helpText}>Ayuda</div>
-        </div>
-      </div>
-      <div id="hover-text" className={styles.hoverText}>
-        Para enviar su número de teléfono correctamente deberá seleccionar el
-        país en el que está registrado y luego su prefijo. Por ejemplo, un
-        número que es de Capital, ingresaría “1108001234”, o si es de La Plata
-        ingresaría “2217654321”.
-      </div>{' '}
+     
       {/* Agregar esta línea */}
     </div>
   );
