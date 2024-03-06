@@ -14,45 +14,44 @@ import React, { useState } from 'react';
 const Home: React.FC = () => {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [value, setValue] = useState<string | undefined>('');
-  const { mutate: crearModelo, error, status } = trpc.perfil.create.useMutation();
+  const {
+    mutate: crearModelo,
+    error,
+    status,
+  } = trpc.perfil.create.useMutation();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // agarrar nombre y telefono del form
     const nombre = event.currentTarget.nombreApellido.value;
     const telefono = event.currentTarget.telefono.value;
-    crearModelo({nombre,telefono});
-
-
+    crearModelo({ nombre, telefono });
 
     // llamar a la funcion de trpc
 
-
     setFormSubmitted(true);
     console.log('Formulario enviado');
-    if (error && error.data && error.data.code === "CONFLICT") {
+    if (error && error.data && error.data.code === 'CONFLICT') {
       console.error('Error al crear perfil:', error);
     }
   };
 
-  const telefonoExistente = error && error.data && error.data.code === 'CONFLICT';
+  const telefonoExistente =
+    error && error.data && error.data.code === 'CONFLICT';
   return (
     <div>
       <Head>
         <title>¿Quieres desfilar?</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       <div className={styles.brownBar}>
         <Image src="/images/image.jpg" alt="Imagen" width={100} height={55} />
       </div>
-
       <div className={styles.header}>
         <h1>
           <i>¿Querés desfilar?</i>
         </h1>
       </div>
-
       <div className={styles.subtitle}>
         <p style={{ marginBottom: '10px', fontStyle: 'italic' }}>
           En Expo Desfiles tenemos la oportunidad que estabas esperando.
@@ -64,7 +63,6 @@ const Home: React.FC = () => {
           ¿Te interesa? ¡Rellena estos datos para participar!
         </p>
       </div>
-
       <div className={styles.form}>
         <form onSubmit={handleSubmit}>
           <div className={styles.inputGroup}>
@@ -95,12 +93,10 @@ const Home: React.FC = () => {
               ENVIAR
             </button>
           </div>
-          {status==="error" && (
-            <p className={styles.errorMessage}>
-              {error.message}
-            </p>
+          {status === 'error' && (
+            <p className={styles.errorMessage}>{error.message}</p>
           )}
-          {status==="success" && (
+          {status === 'success' && (
             <p className={styles.successMessage}>
               Los datos han sido enviados correctamente, en unos minutos le
               llegara un mensaje a su WhatssApp. Si no le ha llegado, envie de
@@ -109,7 +105,7 @@ const Home: React.FC = () => {
           )}
         </form>
       </div>
-      <div className={styles.bottomContent}>
+      <div id="bottom-content" className={styles.bottomContent}>
         <div className={styles.helpImageContainer}>
           <Image
             src="/images/signoPregunta.jpg"
@@ -118,19 +114,17 @@ const Home: React.FC = () => {
             height={50}
           />
           <div className={styles.helpText}>Ayuda</div>
-          <div className={styles.hoverText}>
-            Para enviar su número de teléfono correctamente deberá seleccionar
-            el país en el que está registrado y luego su prefijo.
-            Por ejemplo, un número que es de Capital,
-            ingresaría “1108001234”, o si es de La Plata ingresaría
-            “2217654321”.
-          </div>{' '}
-          {/* Agregar esta línea */}
         </div>
       </div>
+      <div id="hover-text" className={styles.hoverText}>
+        Para enviar su número de teléfono correctamente deberá seleccionar el
+        país en el que está registrado y luego su prefijo. Por ejemplo, un
+        número que es de Capital, ingresaría “1108001234”, o si es de La Plata
+        ingresaría “2217654321”.
+      </div>{' '}
+      {/* Agregar esta línea */}
     </div>
   );
 };
-
 
 export default Home;
