@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import styles from './styles.module.css';
 import Provider from '@/app/_trpc/Provider';
 import { cn } from '@/lib/utils';
+import TopBar from '@/components/TopBar';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,7 +19,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn('bg-slate-800', inter.className)}>
+      <body className='w-screen'>
+        <TopBar />
         <Provider>{children}</Provider>
       </body>
     </html>

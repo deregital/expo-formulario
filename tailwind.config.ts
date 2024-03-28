@@ -19,6 +19,7 @@ const config = {
     },
     extend: {
       colors: {
+        'topbar': '#8C355E',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

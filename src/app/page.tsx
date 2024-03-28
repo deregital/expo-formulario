@@ -40,74 +40,7 @@ const Home: React.FC = () => {
     error && error.data && error.data.code === 'CONFLICT';
   return (
     <div>
-      <Head>
-        <title>¿Quieres desfilar?</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <div className={styles.brownBar}>
-        <Image src="/images/image.jpg" alt="Imagen" width={100} height={55} />
-      </div>
-      <div className={styles.header}>
-        <h1>
-          <i>¿Querés desfilar?</i>
-        </h1>
-      </div>
-      <div className={styles.subtitle}>
-        <p style={{ marginBottom: '10px', fontStyle: 'italic' }}>
-          En Expo Desfiles tenemos la oportunidad que estabas esperando.
-        </p>
-        <p style={{ marginBottom: '10px', fontStyle: 'italic' }}>
-          Vas a recibir entrenamientos y vas a poder desfilar ¡GRATIS!
-        </p>
-        <p style={{ fontStyle: 'italic' }}>
-          ¿Te interesa? ¡Rellena estos datos para participar!
-        </p>
-      </div>
-      <div className={styles.form}>
-        <form onSubmit={handleSubmit}>
-          <div className={styles.inputGroup}>
-            <input
-              type="text"
-              id="nombreApellido"
-              name="nombreApellido"
-              placeholder="Nombre/s y Apellido/s"
-              className={styles.inputField}
-            />
-          </div>
-
-          <div className={styles.inputGroup}>
-            <PhoneInput
-              placeholder="Número de Teléfono"
-              id="telefono"
-              international
-              value={value}
-              onChange={setValue}
-              defaultCountry="AR"
-              className={styles.inputField}
-              countryCallingCodeEditable={false}
-              displayInitialValueAsLocalNumber
-            />
-          </div>
-          <div className={styles.buttonContainer}>
-            <button type="submit" className={styles.submitButton}>
-              ENVIAR
-            </button>
-          </div>
-          {status === 'error' && (
-            <p className={styles.errorMessage}>{error.message}</p>
-          )}
-          {status === 'success' && (
-            <p className={styles.successMessage}>
-              Los datos han sido enviados correctamente, en unos minutos le
-              llegara un mensaje a su WhatssApp. Si no le ha llegado, envie de
-              vuelta sus datos, seleccionando correctamente el país en el que está registrado
-               y luego su prefijo.
-            </p>
-          )}
-        </form>
-      </div>
-     
-      {/* Agregar esta línea */}
+      <p>hola</p>
     </div>
   );
 };
