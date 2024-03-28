@@ -1,15 +1,9 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { trpc } from '@/lib/trpc';
-import Link from 'next/link';
-import styles from './styles.module.css';
-import Head from 'next/head';
-import Image from 'next/image';
-import { title } from 'process';
-import PhoneInput from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
 import React, { useState } from 'react';
+import 'react-phone-number-input/style.css';
+import './globals.css';
 
 const Home: React.FC = () => {
   const [formSubmitted, setFormSubmitted] = useState(false);
