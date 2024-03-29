@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import 'react-phone-number-input/style.css';
 import './globals.css';
 import Information from '@/components/Information';
+import InscripcionBox from '@/components/InscripcionBox';
 
 const Home: React.FC = () => {
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -36,6 +37,7 @@ const Home: React.FC = () => {
   return (
     <div className='max-w-[800px] mx-auto'>
       <Information />
+      <InscripcionBox />
     </div>
   );
 };
