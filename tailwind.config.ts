@@ -18,6 +18,10 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        'bodoni': ['Libre Bodoni', 'serif'],
+        'poppins': ['Poppins', 'sans-serif'],
+      },
       colors: {
         'topbar': '#8C355E',
         border: "hsl(var(--border))",
