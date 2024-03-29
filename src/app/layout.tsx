@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import styles from './styles.module.css';
+import { Libre_Bodoni } from 'next/font/google';
 import Provider from '@/app/_trpc/Provider';
+import './globals.css';
 import { cn } from '@/lib/utils';
 import TopBar from '@/components/TopBar';
 
@@ -21,7 +22,9 @@ export default function RootLayout({
     <html lang="en">
       <body className='w-screen'>
         <TopBar />
+        <main className='px-5'>
         <Provider>{children}</Provider>
+        </main>
       </body>
     </html>
   );

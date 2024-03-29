@@ -4,6 +4,7 @@ import { trpc } from '@/lib/trpc';
 import React, { useState } from 'react';
 import 'react-phone-number-input/style.css';
 import './globals.css';
+import Information from '@/components/Information';
 
 const Home: React.FC = () => {
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -33,8 +34,8 @@ const Home: React.FC = () => {
   const telefonoExistente =
     error && error.data && error.data.code === 'CONFLICT';
   return (
-    <div>
-      <p>hola</p>
+    <div className='max-w-[800px] mx-auto'>
+      <Information />
     </div>
   );
 };
