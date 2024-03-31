@@ -16,6 +16,10 @@ const InscripcionBox = () => {
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const nombre = event.currentTarget.nombreApellido.value;
+        // Limpiar el input del nombre
+        event.currentTarget.nombreApellido.value = '';
+        // Limpiar el input del telefono
+        setValue('');
         // crearModelo.mutateAsync({ nombre: nombre, telefono: value ? value : ''});
         useFormSend.setState({open: true});
     }
@@ -29,7 +33,7 @@ const InscripcionBox = () => {
             </div>
             <div>
                 <form onSubmit={handleSubmit} className="flex flex-col items-center gap-y-4 p-4 max-w-xl mx-auto">
-                    <input type="text" name="nombreApellido" id="nombreApellido" className={`border-2 border-topbar rounded-md p-2 mt-2 w-full ${open ? 'text-topbar/25' : ''}`} placeholder="Nombre/s y apellido/s" required />
+                    <input type="text" autoComplete='off' name="nombreApellido" id="nombreApellido" className={`border-2 border-topbar rounded-md p-2 mt-2 w-full ${open ? 'text-topbar/25' : ''}`} placeholder="Nombre/s y apellido/s" required />
                     <div className='border-2 border-topbar rounded-md px-2 py-1 flex flex-col gap-y-1.5 w-full relative'>
                         <p className='text-xs text-black/50 ml-10'>Número de telefono</p>
                         <PhoneInput placeholder="Número de Teléfono"
