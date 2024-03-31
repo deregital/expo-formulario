@@ -1,24 +1,35 @@
 'use client'
 import Image from 'next/image';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import PhoneInput from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
+import { trpc } from '@/lib/trpc';
+import { useFormSend } from './mainLayout';
+
+
 
 const InscripcionBox = () => {
     const [value, setValue] = useState<string | undefined>('');
+    const [help, setHelp] = useState<boolean>(false);
+    const [open, setOpen] = useState(false);
+    const crearModelo = trpc.perfil.create.useMutation();
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const nombre = event.currentTarget.nombreApellido.value;
-        console.log(nombre, value);
+        // crearModelo.mutateAsync({ nombre: nombre, telefono: value ? value : ''});
+        useFormSend.setState({open: true});
     }
+    useFormSend.subscribe((state) => {
+        setOpen(state.open);
+    });
     return (
-        <div className="border border-black mb-10">
+        <div className={`border border-black mb-5`}>
             <div className="bg-topbar w-full">
                 <p className="text-center py-1 text-white font-poppins">Rellená estos datos para participar</p>
             </div>
             <div>
                 <form onSubmit={handleSubmit} className="flex flex-col items-center gap-y-4 p-4 max-w-xl mx-auto">
-                    <input type="text" name="nombreApellido" id="nombreApellido" className="border-2 border-topbar rounded-md p-2 mt-2 w-full" placeholder="Nombre/s y apellido/s" required />
+                    <input type="text" name="nombreApellido" id="nombreApellido" className={`border-2 border-topbar rounded-md p-2 mt-2 w-full ${open ? 'text-topbar/25' : ''}`} placeholder="Nombre/s y apellido/s" required />
                     <div className='border-2 border-topbar rounded-md px-2 py-1 flex flex-col gap-y-1.5 w-full relative'>
                         <p className='text-xs text-black/50 ml-10'>Número de telefono</p>
                         <PhoneInput placeholder="Número de Teléfono"
@@ -28,12 +39,15 @@ const InscripcionBox = () => {
                                     defaultCountry= "AR"
                                     countryCallingCodeEditable={false}
                                     displayInitialValueAsLocalNumber 
-                                    className="" required />
+                                    className={``} required />
                         <div className='absolute flex justify-center items-center h-full -top-[1px] -right-12'>
-                            <Image src={svgHelp} alt="Help" width={30} height={30} />
+                            <Image className='hover:cursor-pointer' onMouseOver={() => setHelp(true)} onMouseOut={() => setHelp(false)} src={svgHelp} alt="Help" width={32} height={32} />
+                            {help && (
+                                <span className="bg-white absolute top-10 px-5 bg-green border-2 border-topbar shadow-md shadow-black/50 text-center w-80 text-xs text-balance mt-3 after:absolute after:bottom-full after:left-1/2 after:ml-[-5px] after:border-solid after:border-transparent after:border-black after:border-t-5 after:border-l-5 after:border-r-5 after:content-[' ']">Para enviar su número de teléfono correctamente deberá <strong>seleccionar el país en el que está registrado</strong> y luego su prefijo. Por ejemplo, un número que es de Capital, ingresaría "1108001234", o si es de La Plata ingresaría "2217654321".</span>
+                            )}
                         </div>
                     </div>
-                    <button type="submit" className="bg-topbar font-bodoni font-bold text-2xl text-white rounded-md px-5 py-1 w-fit">Enviar</button>
+                    <button type="submit" className="bg-topbar hover:bg-topbar/80 font-bodoni font-bold text-2xl text-white rounded-md px-5 py-1 w-fit">Enviar</button>
                 </form>
             </div>
         </div>
