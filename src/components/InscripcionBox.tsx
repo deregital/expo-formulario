@@ -30,7 +30,7 @@ const InscripcionBox = () => {
     return (
         <div className={`border border-black mb-5 xl:mb-0`}>
             <div className="bg-topbar w-full">
-                <p className="text-center py-1 text-white font-poppins">Rellená estos datos para participar</p>
+                <p className="text-center py-1 text-white font-poppins text-sm md:text-base">Rellená estos datos para participar</p>
             </div>
             <div>
                 <form onSubmit={handleSubmit} className="flex flex-col items-center gap-y-4 p-4 max-w-[240px] sm:max-w-lg md:max-w-xl mx-auto">
