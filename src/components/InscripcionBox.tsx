@@ -17,11 +17,11 @@ const InscripcionBox = () => {
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const nombre = event.currentTarget.nombreApellido.value;
-        // Limpiar el input del nombre
-        event.currentTarget.nombreApellido.value = '';
+        crearModelo.mutateAsync({ nombre: nombre, telefono: value ? value : ''});
         // Limpiar el input del telefono
         setValue('');
-        // crearModelo.mutateAsync({ nombre: nombre, telefono: value ? value : ''});
+        // Limpiar el input del nombre
+        event.currentTarget.nombreApellido.value = '';
         useFormSend.setState({open: true});
     }
     useFormSend.subscribe((state) => {
