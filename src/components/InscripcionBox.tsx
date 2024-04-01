@@ -33,7 +33,7 @@ const InscripcionBox = () => {
                 <p className="text-center py-1 text-white font-poppins">Rellená estos datos para participar</p>
             </div>
             <div>
-                <form onSubmit={handleSubmit} className="flex flex-col items-center gap-y-4 p-4 max-w-[240px] sm:max-w-lg lg:max-w-xl mx-auto">
+                <form onSubmit={handleSubmit} className="flex flex-col items-center gap-y-4 p-4 max-w-[240px] sm:max-w-lg md:max-w-xl mx-auto">
                     <input type="text" autoComplete='off' name="nombreApellido" id="nombreApellido" className={`border-2 border-topbar rounded-md p-2 mt-2 w-full ${open ? 'text-topbar/25' : ''}`} placeholder="Nombre/s y apellido/s" required />
                     <div className='border-2 border-topbar rounded-md px-2 py-1 flex flex-col gap-y-1.5 w-full relative'>
                         <p className='text-xs text-black/50 ml-10'>Número de telefono</p>
