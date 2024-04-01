@@ -19,6 +19,9 @@ const config = {
     },
     extend: {
       screens: {
+        "mobileMd": "375px",
+        "mobileLg": "425px",
+        "mobileXl": "520px",
         "2xl": "1400px",
       },
       fontFamily: {
