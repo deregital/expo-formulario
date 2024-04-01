@@ -48,7 +48,19 @@ const InscripcionBox = () => {
                         <div className='absolute flex justify-center items-center h-full -top-[1px] -right-9 mobileMd:-right-10 mobileXl:-right-12'>
                             <Image className='hover:cursor-pointer' onMouseOver={() => setHelp(true)} onMouseOut={() => setHelp(false)} src={svgHelp} alt="Help" width={32} height={32} />
                             {help && ( 
-                                <span className="bg-white absolute top-10 -right-2 xl:right-0 xl:-top-full xl:left-10 px-5 bg-green border-2 border-topbar shadow-md shadow-black/50 text-center w-72 2xl:w-80 text-xs text-balance mt-3 after:absolute after:bottom-full after:left-1/2 after:ml-[-5px] after:border-solid after:border-transparent after:border-black after:border-t-5 after:border-l-5 after:border-r-5 after:content-[' ']">Para enviar su número de teléfono correctamente deberá <strong>seleccionar el país en el que está registrado</strong> y luego su prefijo. Por ejemplo, un número que es de Capital, ingresaría "1108001234", o si es de La Plata ingresaría "2217654321".</span>
+                                <span className='bg-white absolute top-10 -right-2 xl:right-0 xl:-top-full xl:left-10 px-5 bg-green border-2 border-topbar shadow-md shadow-black/50 text-center w-72 2xl:w-80 text-xs text-balance mt-3 after:content-[""] after:absolute after:bottom-full after:right-0 after:ml-[-5px] after:border-solid after:border-transparent after:border-black after:border-t-5 after:border-l-5 after:border-r-5'>Para enviar su número de teléfono correctamente deberá <strong>seleccionar el país en el que está registrado</strong> y luego su prefijo. Por ejemplo, un número que es de Capital, ingresaría "1108001234", o si es de La Plata ingresaría "2217654321".</span>
+                                // {/* <Tooltip.Provider>
+                                //     <Tooltip.Root>
+                                //     <Tooltip.Trigger asChild>
+                                //     </Tooltip.Trigger>
+                                //     <Tooltip.Portal>
+                                //         <Tooltip.Content side='left' className='text-balance bg-white border-2 border-topbar'>
+                                //         <p>Para enviar su número de teléfono correctamente deberá seleccionar el país en el que está registrado y luego su prefijo. Por ejemplo, un número que es de Capital, ingresaría "1108001234", o si es de La Plata ingresaría "2217654321".</p>
+                                //         <Tooltip.Arrow width={10} height={10} />
+                                //         </Tooltip.Content>
+                                //     </Tooltip.Portal>
+                                //     </Tooltip.Root>
+                                // </Tooltip.Provider> */}
                                 // {/* <Tooltip.Provider>
                                 //     <Tooltip.Root>
                                 //     <Tooltip.Trigger asChild>
