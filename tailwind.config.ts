@@ -18,6 +18,9 @@ const config = {
       },
     },
     extend: {
+      screens: {
+        "2xl": "1400px",
+      },
       fontFamily: {
         'bodoni': ['Libre Bodoni', 'serif'],
         'poppins': ['Poppins', 'sans-serif'],

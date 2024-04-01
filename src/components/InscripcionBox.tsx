@@ -5,6 +5,7 @@ import PhoneInput from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
 import { trpc } from '@/lib/trpc';
 import { useFormSend } from './mainLayout';
+import * as Tooltip from '@radix-ui/react-tooltip';
 
 
 
@@ -27,12 +28,12 @@ const InscripcionBox = () => {
         setOpen(state.open);
     });
     return (
-        <div className={`border border-black mb-5`}>
+        <div className={`border border-black mb-5 xl:mb-0`}>
             <div className="bg-topbar w-full">
                 <p className="text-center py-1 text-white font-poppins">Rellená estos datos para participar</p>
             </div>
             <div>
-                <form onSubmit={handleSubmit} className="flex flex-col items-center gap-y-4 p-4 max-w-xl mx-auto">
+                <form onSubmit={handleSubmit} className="flex flex-col items-center gap-y-4 p-4 max-w-[240px] sm:max-w-lg lg:max-w-xl mx-auto">
                     <input type="text" autoComplete='off' name="nombreApellido" id="nombreApellido" className={`border-2 border-topbar rounded-md p-2 mt-2 w-full ${open ? 'text-topbar/25' : ''}`} placeholder="Nombre/s y apellido/s" required />
                     <div className='border-2 border-topbar rounded-md px-2 py-1 flex flex-col gap-y-1.5 w-full relative'>
                         <p className='text-xs text-black/50 ml-10'>Número de telefono</p>
@@ -44,11 +45,24 @@ const InscripcionBox = () => {
                                     countryCallingCodeEditable={false}
                                     displayInitialValueAsLocalNumber 
                                     className={``} required />
-                        <div className='absolute flex justify-center items-center h-full -top-[1px] -right-12'>
+                        <div className='absolute flex justify-center items-center h-full -top-[1px] -right-9 sm:-right-12'>
                             <Image className='hover:cursor-pointer' onMouseOver={() => setHelp(true)} onMouseOut={() => setHelp(false)} src={svgHelp} alt="Help" width={32} height={32} />
-                            {help && (
+                            {help && ( 
                                 <span className="bg-white absolute top-10 px-5 bg-green border-2 border-topbar shadow-md shadow-black/50 text-center w-80 text-xs text-balance mt-3 after:absolute after:bottom-full after:left-1/2 after:ml-[-5px] after:border-solid after:border-transparent after:border-black after:border-t-5 after:border-l-5 after:border-r-5 after:content-[' ']">Para enviar su número de teléfono correctamente deberá <strong>seleccionar el país en el que está registrado</strong> y luego su prefijo. Por ejemplo, un número que es de Capital, ingresaría "1108001234", o si es de La Plata ingresaría "2217654321".</span>
+                                // {/* <Tooltip.Provider>
+                                //     <Tooltip.Root>
+                                //     <Tooltip.Trigger asChild>
+                                //     </Tooltip.Trigger>
+                                //     <Tooltip.Portal>
+                                //         <Tooltip.Content side='left' className='text-balance bg-white border-2 border-topbar'>
+                                //         <p>Para enviar su número de teléfono correctamente deberá seleccionar el país en el que está registrado y luego su prefijo. Por ejemplo, un número que es de Capital, ingresaría "1108001234", o si es de La Plata ingresaría "2217654321".</p>
+                                //         <Tooltip.Arrow width={10} height={10} />
+                                //         </Tooltip.Content>
+                                //     </Tooltip.Portal>
+                                //     </Tooltip.Root>
+                                // </Tooltip.Provider> */}
                             )}
+
                         </div>
                     </div>
                     <button type="submit" className="bg-topbar hover:bg-topbar/80 font-bodoni font-bold text-2xl text-white rounded-md px-5 py-1 w-fit">Enviar</button>
