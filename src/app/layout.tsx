@@ -13,16 +13,14 @@ export const metadata: Metadata = {
   description: 'Formulario de inscripción para el evento de Expo',
 };
 
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="en">
-      <body className={`w-screen relative`}>
+      <body className={`relative w-screen overflow-y-auto`}>
         <TopBar />
         <MainLayout>{children}</MainLayout>
       </body>

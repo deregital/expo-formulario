@@ -8,9 +8,9 @@ export const appRouter = router({
     create: publicProcedure
       .input(z.object({ nombre: z.string(), telefono: z.string() }))
       .mutation(async ({ input }) => {
-
-        const telefonoSinSeparaciones = input.telefono.replace(/\s+/g, '').replace(/\+/g, '');
-        
+        const telefonoSinSeparaciones = input.telefono
+          .replace(/\s+/g, '')
+          .replace(/\+/g, '');
 
         const telefonoExistente = await prisma.perfil.findFirst({
           where: {
@@ -27,15 +27,12 @@ export const appRouter = router({
 
         const nombrePila = input.nombre.split(' ')[0];
 
-        
-      
-
         await prisma.perfil.create({
           data: {
             nombreCompleto: input.nombre,
             telefono: telefonoSinSeparaciones,
             nombrePila: nombrePila,
-            etiquetas: {connect: {id:process.env.MODELO_ETIQUETA_ID}}
+            etiquetas: { connect: { id: process.env.MODELO_ETIQUETA_ID } },
           },
         });
       }),
