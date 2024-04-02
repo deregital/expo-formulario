@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`relative w-screen overflow-y-auto`}>
+      <body className={`relative min-h-screen w-screen overflow-y-auto`}>
         <TopBar />
         <MainLayout>{children}</MainLayout>
       </body>
