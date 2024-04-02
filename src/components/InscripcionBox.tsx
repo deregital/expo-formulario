@@ -1,31 +1,48 @@
 'use client';
+import { useFormSend } from '@/components/Modal';
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { trpc } from '@/lib/trpc';
-import { TooltipArrow } from '@radix-ui/react-tooltip';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import PhoneInput from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
-import { useFormSend } from './mainLayout';
 
 const InscripcionBox = () => {
-  const [value, setValue] = useState<string | undefined>('');
+  const [telefonoValue, setTelefonoValue] = useState<string | undefined>('');
   const [open, setOpen] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState(false);
+
+  const handleMouseEnter = () => {
+    setPopoverOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    setPopoverOpen(false);
+  };
+
   const crearModelo = trpc.perfil.create.useMutation();
+  const nombreInputRef = React.useRef<HTMLInputElement>(null);
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const nombre = event.currentTarget.nombreApellido.value;
-    crearModelo.mutateAsync({ nombre: nombre, telefono: value ? value : '' });
-    // Limpiar el input del telefono
-    setValue('');
-    // Limpiar el input del nombre
-    event.currentTarget.nombreApellido.value = '';
-    useFormSend.setState({ open: true });
+
+    if (!nombreInputRef) return;
+    if (!nombreInputRef.current) return;
+    crearModelo
+      .mutateAsync({
+        nombre: nombreInputRef.current?.value,
+        telefono: telefonoValue ? telefonoValue : '',
+      })
+      .then(() => {
+        // Limpiar el input del telefono
+        setTelefonoValue('');
+        // Limpiar el input del nombre
+        nombreInputRef.current!.value = '';
+        useFormSend.setState({ open: true });
+      });
   }
   useFormSend.subscribe((state) => {
     setOpen(state.open);
@@ -47,6 +64,7 @@ const InscripcionBox = () => {
             autoComplete="off"
             name="nombreApellido"
             id="nombreApellido"
+            ref={nombreInputRef}
             className={`mt-2 w-full rounded-md border-2 border-topbar p-2 ${open ? 'text-topbar/25' : ''}`}
             placeholder="Nombre/s y apellido/s"
             required
@@ -56,42 +74,50 @@ const InscripcionBox = () => {
             <PhoneInput
               placeholder="Número de Teléfono"
               international
-              value={value}
-              onChange={setValue}
+              value={telefonoValue}
+              onChange={setTelefonoValue}
               defaultCountry="AR"
               countryCallingCodeEditable={false}
               displayInitialValueAsLocalNumber
               required
             />
             <div className="absolute -right-9 -top-[1px] flex h-full items-center justify-center mobileMd:-right-10 mobileXl:-right-12">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <button className="hover:cursor-pointer">
-                      <Image src={svgHelp} alt="Help" width={32} height={32} />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent
-                    arrowPadding={5}
-                    className="mt-3 w-72 text-balance border-2 border-topbar bg-white px-5 text-center text-xs shadow-md shadow-black/50 xl:-top-full xl:left-10 xl:right-0 2xl:w-80"
-                    sideOffset={5}
-                  >
-                    <TooltipArrow className="z-50" />
-
-                    <p>
-                      Para enviar su número de teléfono correctamente deberá{' '}
-                      <strong>
-                        seleccionar el país en el que está registrado
-                      </strong>{' '}
-                      y luego su prefijo. Por ejemplo, un número que es de
-                      Capital, ingresaría &quot;1108001234&quot;, o si es de La
-                      Plata ingresaría &quot;2217654321&quot;.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Popover open={popoverOpen}>
+                <PopoverTrigger
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  asChild
+                >
+                  <button type="button" className="hover:cursor-pointer">
+                    <Image src={svgHelp} alt="Help" width={32} height={32} />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent
+                  side="top"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  className="mt-3 w-72 text-balance border-2 border-topbar bg-white px-5 text-center text-xs shadow-md shadow-black/50 xl:-top-full xl:left-10 xl:right-0 2xl:w-80"
+                  sideOffset={5}
+                >
+                  <p>
+                    Para enviar su número de teléfono correctamente deberá{' '}
+                    <strong>
+                      seleccionar el país en el que está registrado
+                    </strong>{' '}
+                    y luego su prefijo. Por ejemplo, un número que es de
+                    Capital, ingresaría &quot;1108001234&quot;, o si es de La
+                    Plata ingresaría &quot;2217654321&quot;.
+                  </p>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
+          {crearModelo.error ? (
+            <p className="self-start text-xs font-semibold text-red-500">
+              Error al enviar el formulario,{' '}
+              {crearModelo.error.message.toLowerCase()}
+            </p>
+          ) : null}
           <button
             type="submit"
             className="w-fit rounded-md bg-topbar px-5 py-1 font-bodoni text-2xl font-bold text-white hover:bg-topbar/80"
