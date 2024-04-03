@@ -44,6 +44,9 @@ const InscripcionBox = () => {
         nombreInputRef.current!.value = '';
         setFormSend(false);
         useFormSend.setState({ open: true });
+      })
+      .catch(() => {
+        setFormSend(false);
       });
   }
   useFormSend.subscribe((state) => {
@@ -121,11 +124,67 @@ const InscripcionBox = () => {
             </p>
           ) : null}
           <button
+            disabled={crearModelo.isPending}
             type="submit"
-            className="w-fit rounded-md bg-topbar px-5 py-1 font-bodoni text-2xl font-bold text-white hover:bg-topbar/80 flex justify-center items-center gap-x-2"
+            className="flex w-fit items-center justify-center gap-x-2 rounded-md bg-topbar px-5 py-1 font-bodoni text-2xl font-bold text-white hover:bg-topbar/80"
           >
-            <svg id="loader" className={`w-6 h-6 ${formSend ? 'block' : 'hidden'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><radialGradient id="a12" cx=".66" fx=".66" cy=".3125" fy=".3125" gradientTransform="scale(1.5)"><stop offset="0" stop-color="#FFFFFF"></stop><stop offset=".3" stop-color="#FFFFFF" stop-opacity=".9"></stop><stop offset=".6" stop-color="#FFFFFF" stop-opacity=".6"></stop><stop offset=".8" stop-color="#FFFFFF" stop-opacity=".3"></stop><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"></stop></radialGradient><circle transform-origin="center" fill="none" stroke="url(#a12)" stroke-width="15" stroke-linecap="round" stroke-dasharray="200 1000" stroke-dashoffset="0" cx="100" cy="100" r="70"><animateTransform type="rotate" attributeName="transform" calcMode="spline" dur="2" values="360;0" keyTimes="0;1" keySplines="0 0 1 1" repeatCount="indefinite"></animateTransform></circle><circle transform-origin="center" fill="none" opacity=".2" stroke="#FFFFFF" stroke-width="15" stroke-linecap="round" cx="100" cy="100" r="70"></circle>
-            </svg>
+            {crearModelo.isPending && (
+              <svg
+                id="loader"
+                className="h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 200 200"
+              >
+                <radialGradient
+                  id="a12"
+                  cx=".66"
+                  fx=".66"
+                  cy=".3125"
+                  fy=".3125"
+                  gradientTransform="scale(1.5)"
+                >
+                  <stop offset="0" stopColor="#FFFFFF"></stop>
+                  <stop offset=".3" stopColor="#FFFFFF" stopOpacity=".9"></stop>
+                  <stop offset=".6" stopColor="#FFFFFF" stopOpacity=".6"></stop>
+                  <stop offset=".8" stopColor="#FFFFFF" stopOpacity=".3"></stop>
+                  <stop offset="1" stopColor="#FFFFFF" stopOpacity="0"></stop>
+                </radialGradient>
+                <circle
+                  origin="center"
+                  fill="none"
+                  stroke="url(#a12)"
+                  strokeWidth="15"
+                  strokeLinecap="round"
+                  strokeDasharray="200 1000"
+                  strokeDashoffset="0"
+                  cx="100"
+                  cy="100"
+                  r="70"
+                >
+                  <animateTransform
+                    type="rotate"
+                    attributeName="transform"
+                    calcMode="spline"
+                    dur="2"
+                    values="360;0"
+                    keyTimes="0;1"
+                    keySplines="0 0 1 1"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </circle>
+                <circle
+                  origin="center"
+                  fill="none"
+                  opacity=".2"
+                  stroke="#FFFFFF"
+                  strokeWidth="15"
+                  strokeLinecap="round"
+                  cx="100"
+                  cy="100"
+                  r="70"
+                ></circle>
+              </svg>
+            )}
             Enviar
           </button>
         </form>
