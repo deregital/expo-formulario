@@ -1,6 +1,7 @@
 import {
   AlertDialog,
   AlertDialogContent,
+  AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import React, { useEffect, useState } from 'react';
@@ -31,6 +32,7 @@ const Modal = ({}: ModalProps) => {
   return (
     <AlertDialog open={open}>
       <AlertDialogTrigger></AlertDialogTrigger>
+      <AlertDialogOverlay className='bg-topbar/25'></AlertDialogOverlay>
       <AlertDialogContent className="bg-white p-0">
         <div className="flex items-center justify-end bg-topbar px-3 py-1">
           <div
