@@ -15,6 +15,7 @@ const InscripcionBox = () => {
   const [telefonoValue, setTelefonoValue] = useState<string | undefined>('');
   const [open, setOpen] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const [formSend, setFormSend] = useState(false);
 
   const handleMouseEnter = () => {
     setPopoverOpen(true);
@@ -28,9 +29,9 @@ const InscripcionBox = () => {
   const nombreInputRef = React.useRef<HTMLInputElement>(null);
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     if (!nombreInputRef) return;
     if (!nombreInputRef.current) return;
+    setFormSend(true);
     crearModelo
       .mutateAsync({
         nombre: nombreInputRef.current?.value,
@@ -41,6 +42,7 @@ const InscripcionBox = () => {
         setTelefonoValue('');
         // Limpiar el input del nombre
         nombreInputRef.current!.value = '';
+        setFormSend(false);
         useFormSend.setState({ open: true });
       });
   }
@@ -48,7 +50,7 @@ const InscripcionBox = () => {
     setOpen(state.open);
   });
   return (
-    <div className={`mb-5 border border-black xl:mb-0`}>
+    <div className={`border border-black`}>
       <div className="w-full bg-topbar">
         <p className="py-1 text-center font-poppins text-sm text-white md:text-base">
           Rellená estos datos para participar
@@ -120,8 +122,10 @@ const InscripcionBox = () => {
           ) : null}
           <button
             type="submit"
-            className="w-fit rounded-md bg-topbar px-5 py-1 font-bodoni text-2xl font-bold text-white hover:bg-topbar/80"
+            className="w-fit rounded-md bg-topbar px-5 py-1 font-bodoni text-2xl font-bold text-white hover:bg-topbar/80 flex justify-center items-center gap-x-2"
           >
+            <svg id="loader" className={`w-6 h-6 ${formSend ? 'block' : 'hidden'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><radialGradient id="a12" cx=".66" fx=".66" cy=".3125" fy=".3125" gradientTransform="scale(1.5)"><stop offset="0" stop-color="#FFFFFF"></stop><stop offset=".3" stop-color="#FFFFFF" stop-opacity=".9"></stop><stop offset=".6" stop-color="#FFFFFF" stop-opacity=".6"></stop><stop offset=".8" stop-color="#FFFFFF" stop-opacity=".3"></stop><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"></stop></radialGradient><circle transform-origin="center" fill="none" stroke="url(#a12)" stroke-width="15" stroke-linecap="round" stroke-dasharray="200 1000" stroke-dashoffset="0" cx="100" cy="100" r="70"><animateTransform type="rotate" attributeName="transform" calcMode="spline" dur="2" values="360;0" keyTimes="0;1" keySplines="0 0 1 1" repeatCount="indefinite"></animateTransform></circle><circle transform-origin="center" fill="none" opacity=".2" stroke="#FFFFFF" stroke-width="15" stroke-linecap="round" cx="100" cy="100" r="70"></circle>
+            </svg>
             Enviar
           </button>
         </form>

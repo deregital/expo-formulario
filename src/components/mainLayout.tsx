@@ -17,10 +17,9 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <main className={cn('px-5', open && 'bg-topbar/25')}>
+      <main className={cn('px-5 pb-5', open && 'bg-topbar/25')}>
         <Provider>{children}</Provider>
       </main>
-
       <Modal />
     </>
   );
