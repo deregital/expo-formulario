@@ -32,11 +32,13 @@ const InscripcionBox = () => {
     if (!nombreInputRef) return;
     if (!nombreInputRef.current) return;
     setFormSend(true);
-    crearModelo
-      .mutateAsync({
-        nombre: nombreInputRef.current?.value,
-        telefono: telefonoValue ? telefonoValue : '',
-      })
+    fetch(`https://${process.env.EXPO_MANAGER_URL}/api/formulario`, {
+      method: 'POST',
+      body: JSON.stringify({
+        nombre: nombreInputRef.current.value,
+        telefono: telefonoValue,
+      }),
+    })
       .then(() => {
         // Limpiar el input del telefono
         setTelefonoValue('');
