@@ -5,7 +5,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { trpc } from '@/lib/trpc';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import PhoneInput from 'react-phone-number-input';
@@ -26,7 +25,6 @@ const InscripcionBox = () => {
     setPopoverOpen(false);
   };
 
-  const crearModelo = trpc.perfil.create.useMutation();
   const nombreInputRef = React.useRef<HTMLInputElement>(null);
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -134,11 +132,11 @@ const InscripcionBox = () => {
             </p>
           ) : null}
           <button
-            disabled={crearModelo.isPending}
+            disabled={formSend}
             type="submit"
             className="flex w-fit items-center justify-center gap-x-2 rounded-md bg-topbar px-5 py-1 font-bodoni text-2xl font-bold text-white hover:bg-topbar/80"
           >
-            {crearModelo.isPending && (
+            {formSend && (
               <svg
                 id="loader"
                 className="h-6 w-6"
