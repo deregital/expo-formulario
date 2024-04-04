@@ -9,6 +9,7 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import PhoneInput from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
+import { getUrl } from '@/server/actions';
 
 const InscripcionBox = () => {
   const [telefonoValue, setTelefonoValue] = useState<string | undefined>('');
@@ -31,7 +32,8 @@ const InscripcionBox = () => {
     if (!nombreInputRef) return;
     if (!nombreInputRef.current) return;
     setFormSend(true);
-    await fetch(`https://${process.env.EXPO_MANAGER_URL}/api/formulario`, {
+    const expo_manager_url = await getUrl();
+    await fetch(`https://${expo_manager_url}/api/formulario`, {
       method: 'POST',
       body: JSON.stringify({
         nombreCompleto: nombreInputRef.current.value,
