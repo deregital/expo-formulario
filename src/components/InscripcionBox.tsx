@@ -15,6 +15,7 @@ const InscripcionBox = () => {
   const [telefonoValue, setTelefonoValue] = useState<string | undefined>('');
   const [open, setOpen] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const [error, setError] = useState<string | undefined>(undefined);
   const [formSend, setFormSend] = useState(false);
 
   const handleMouseEnter = () => {
@@ -32,22 +33,29 @@ const InscripcionBox = () => {
     if (!nombreInputRef) return;
     if (!nombreInputRef.current) return;
     setFormSend(true);
-    fetch(`https://${process.env.EXPO_MANAGER_URL}/api/formulario`, {
+    await fetch(`https://${process.env.EXPO_MANAGER_URL}/api/formulario`, {
       method: 'POST',
       body: JSON.stringify({
-        nombre: nombreInputRef.current.value,
+        nombreCompleto: nombreInputRef.current.value,
         telefono: telefonoValue,
       }),
     })
-      .then(() => {
+      .then(async(response) => {
         // Limpiar el input del telefono
+        setError(undefined);
         setTelefonoValue('');
         // Limpiar el input del nombre
         nombreInputRef.current!.value = '';
         setFormSend(false);
-        useFormSend.setState({ open: true });
+        if (response.status !== 200 && response.status !== 201) {
+          const error = await response.json();
+          setError(error.error.toLowerCase());
+        } else {
+          setError(undefined);
+          useFormSend.setState({ open: true });
+        }
       })
-      .catch(() => {
+      .catch((error) => {
         setFormSend(false);
       });
   }
@@ -119,10 +127,10 @@ const InscripcionBox = () => {
               </Popover>
             </div>
           </div>
-          {crearModelo.error ? (
+          {error ? (
             <p className="self-start text-xs font-semibold text-red-500">
               Error al enviar el formulario,{' '}
-              {crearModelo.error.message.toLowerCase()}
+              {error}
             </p>
           ) : null}
           <button
