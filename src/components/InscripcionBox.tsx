@@ -10,6 +10,16 @@ import React, { useState } from 'react';
 import PhoneInput from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
 import { getUrl } from '@/server/actions';
+import { cn } from '@/lib/utils';
+import { Libre_Bodoni } from 'next/font/google';
+
+export const bodoniFont = Libre_Bodoni({
+  adjustFontFallback: true,
+  preload: true,
+  weight: 'variable',
+  fallback: ['serif'],
+  subsets: ['latin'],
+});
 
 const InscripcionBox = () => {
   const [telefonoValue, setTelefonoValue] = useState<string | undefined>('');
@@ -33,19 +43,16 @@ const InscripcionBox = () => {
     if (!nombreInputRef.current) return;
     setFormSend(true);
     const expo_manager_url = await getUrl();
-    await fetch(`https://${expo_manager_url}/api/formulario`, {
+    await fetch(`${expo_manager_url}/api/formulario`, {
       method: 'POST',
       body: JSON.stringify({
         nombreCompleto: nombreInputRef.current.value,
         telefono: telefonoValue,
       }),
     })
-      .then(async(response) => {
+      .then(async (response) => {
         // Limpiar el input del telefono
         setError(undefined);
-        setTelefonoValue('');
-        // Limpiar el input del nombre
-        nombreInputRef.current!.value = '';
         setFormSend(false);
         if (response.status !== 200 && response.status !== 201) {
           const error = await response.json();
@@ -53,10 +60,14 @@ const InscripcionBox = () => {
         } else {
           setError(undefined);
           useFormSend.setState({ open: true });
+          // Limpiar el input del nombre
+          nombreInputRef.current!.value = '';
+          setTelefonoValue('');
         }
       })
       .catch((error) => {
         setFormSend(false);
+        setError(error.message);
       });
   }
   useFormSend.subscribe((state) => {
@@ -65,7 +76,7 @@ const InscripcionBox = () => {
   return (
     <div className={`border border-black`}>
       <div className="w-full bg-topbar">
-        <p className="py-1 text-center font-poppins text-sm text-white md:text-base">
+        <p className="py-1 text-center text-sm text-white md:text-base">
           Rellená estos datos para participar
         </p>
       </div>
@@ -129,14 +140,16 @@ const InscripcionBox = () => {
           </div>
           {error ? (
             <p className="self-start text-xs font-semibold text-red-500">
-              Error al enviar el formulario,{' '}
-              {error}
+              Error al enviar el formulario, {error}
             </p>
           ) : null}
           <button
             disabled={formSend}
             type="submit"
-            className="flex w-fit items-center justify-center gap-x-2 rounded-md bg-topbar px-5 py-1 font-bodoni text-2xl font-bold text-white hover:bg-topbar/80"
+            className={cn(
+              'flex w-fit items-center justify-center gap-x-2 rounded-md bg-topbar px-5 py-1 text-2xl font-bold text-white hover:bg-topbar/80',
+              bodoniFont.className
+            )}
           >
             {formSend && (
               <svg
