@@ -1,16 +1,23 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import styles from './styles.module.css';
-import Provider from '@/app/_trpc/Provider';
-import { cn } from '@/lib/utils';
-import TopBar from '@/components/TopBar';
+import { Inter, Poppins } from 'next/font/google';
 
-const inter = Inter({ subsets: ['latin'] });
+import './globals.css';
+import TopBar from '@/components/TopBar';
+import MainLayout from '@/components/mainLayout';
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'Expo formulario',
   description: 'Formulario de inscripción para el evento de Expo',
 };
+
+export const poppinsFont = Poppins({
+  adjustFontFallback: true,
+  preload: true,
+  weight: ['400', '700'],
+  fallback: ['sans-serif'],
+  subsets: ['latin'],
+});
 
 export default function RootLayout({
   children,
@@ -19,9 +26,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className='w-screen'>
+      <body
+        className={cn(
+          'relative min-h-screen w-screen overflow-y-auto',
+          poppinsFont.className
+        )}
+      >
         <TopBar />
-        <Provider>{children}</Provider>
+        <MainLayout>{children}</MainLayout>
       </body>
     </html>
   );
