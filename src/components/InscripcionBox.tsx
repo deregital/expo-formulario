@@ -9,7 +9,7 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import PhoneInput from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
-import { getUrl } from '@/server/actions';
+import { getPassword, getUrl, getUsername } from '@/server/actions';
 import { cn } from '@/lib/utils';
 import { bodoniFont } from '@/lib/fonts';
 
@@ -35,11 +35,15 @@ const InscripcionBox = () => {
     if (!nombreInputRef.current) return;
     setFormSend(true);
     const expo_manager_url = await getUrl();
+    const expo_manager_username = await getUsername();
+    const expo_manager_password = await getPassword();
     await fetch(`${expo_manager_url}/api/formulario`, {
       method: 'POST',
       body: JSON.stringify({
         nombreCompleto: nombreInputRef.current.value,
         telefono: telefonoValue,
+        username: expo_manager_username,
+        password: expo_manager_password,
       }),
     })
       .then(async (response) => {
@@ -83,6 +87,7 @@ const InscripcionBox = () => {
             name="nombreApellido"
             id="nombreApellido"
             ref={nombreInputRef}
+            maxLength={100}
             className={`mt-2 w-full rounded-md border-2 border-topbar p-2 ${open ? 'text-topbar/25' : ''}`}
             placeholder="Nombre/s y apellido/s"
             required
