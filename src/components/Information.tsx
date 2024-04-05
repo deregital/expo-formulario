@@ -1,4 +1,4 @@
-import { bodoniFont } from '@/components/InscripcionBox';
+import { bodoniFont } from '@/lib/fonts';
 import { cn } from '@/lib/utils';
 
 const Information = () => {

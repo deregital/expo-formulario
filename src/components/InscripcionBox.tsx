@@ -11,15 +11,7 @@ import PhoneInput from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
 import { getUrl } from '@/server/actions';
 import { cn } from '@/lib/utils';
-import { Libre_Bodoni } from 'next/font/google';
-
-export const bodoniFont = Libre_Bodoni({
-  adjustFontFallback: true,
-  preload: true,
-  weight: 'variable',
-  fallback: ['serif'],
-  subsets: ['latin'],
-});
+import { bodoniFont } from '@/lib/fonts';
 
 const InscripcionBox = () => {
   const [telefonoValue, setTelefonoValue] = useState<string | undefined>('');

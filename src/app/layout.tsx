@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Poppins } from 'next/font/google';
+import { poppinsFont } from '@/lib/fonts';
 
 import './globals.css';
 import TopBar from '@/components/TopBar';
@@ -10,14 +10,6 @@ export const metadata: Metadata = {
   title: 'Expo formulario',
   description: 'Formulario de inscripción para el evento de Expo',
 };
-
-export const poppinsFont = Poppins({
-  adjustFontFallback: true,
-  preload: true,
-  weight: ['400', '700'],
-  fallback: ['sans-serif'],
-  subsets: ['latin'],
-});
 
 export default function RootLayout({
   children,
