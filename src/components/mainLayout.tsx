@@ -4,9 +4,6 @@ import Modal, { useFormSend } from '@/components/Modal';
 import { cn } from '@/lib/utils';
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
-  const { open } = useFormSend((s) => ({
-    open: s.open,
-  }));
 
   return (
     <>
