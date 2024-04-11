@@ -59,6 +59,7 @@ const InscripcionBox = () => {
           // Limpiar el input del nombre
           nombreInputRef.current!.value = '';
           setTelefonoValue('');
+          window.open('https://wa.me/541160435283?text=Hola.%20Estoy%20interesado%20en%20comprar%20un%20USB', '_blank');
         }
       })
       .catch((error) => {
@@ -70,7 +71,7 @@ const InscripcionBox = () => {
     setOpen(state.open);
   });
   return (
-    <div className={`border border-black`}>
+    <div className={`border border-black bg-white mt-10 sm:mt-0`}>
       <div className="w-full bg-topbar">
         <p className="py-1 text-center text-sm text-white md:text-base">
           Rellená estos datos para participar
