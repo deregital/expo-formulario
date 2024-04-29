@@ -19,7 +19,7 @@ export const useFormSend = create(() => ({
 }));
 
 const Modal = ({}: ModalProps) => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   useFormSend.subscribe((state) => {
     setOpen(state.open);
   });
