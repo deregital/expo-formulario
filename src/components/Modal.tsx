@@ -4,19 +4,22 @@ import {
   AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import React, { useEffect, useState } from 'react';
+import IconWhatsapp from '@/components/WhatsappIcon';
+import { useEffect, useState } from 'react';
 import { create } from 'zustand';
-import WppLogo from '../../public/images/wpplogo.png';
-import Image from 'next/image';
 
 interface ModalProps {}
+
+export const useFormData = create<{ nombreCompleto: string }>(() => ({
+  nombreCompleto: '',
+}));
 
 export const useFormSend = create(() => ({
   open: false,
 }));
 
 const Modal = ({}: ModalProps) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   useFormSend.subscribe((state) => {
     setOpen(state.open);
   });
@@ -34,7 +37,7 @@ const Modal = ({}: ModalProps) => {
   return (
     <AlertDialog open={open}>
       <AlertDialogTrigger></AlertDialogTrigger>
-      <AlertDialogOverlay className='bg-topbar/25' />
+      <AlertDialogOverlay className="bg-topbar/25" />
       <AlertDialogContent className="bg-white p-0">
         <div className="flex items-center justify-end bg-topbar px-3 py-1">
           <div
@@ -56,18 +59,26 @@ const Modal = ({}: ModalProps) => {
           </div>
         </div>
         <p className="text-balance py-8 text-center">
-    Los datos han sido <strong>enviados correctamente</strong>. Para seguir con el contacto, 
-     mandanos un mensaje por Whatsapp haciendo click acá{' '}
-    <span role="img" aria-label="point_down">👉</span> 
-    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-        <Image
-            src={WppLogo} 
-            alt="WhatsApp Logo" 
-            onClick={() => window.open('https://wa.me/541160435283?text=Hola,%20soy%20(nombre%20completo),%20Quiero%20Participar%20en%20Expo%20Desfiles.', '_blank')} 
-            style={{ cursor: 'pointer', marginLeft: '5px', width: '20px', height: '20px'}} 
-        />
-    </span>
-</p>
+          Los datos han sido <strong>enviados correctamente</strong>. Para
+          seguir con el contacto, mandanos un mensaje por Whatsapp haciendo
+          click acá{' '}
+          <button
+            onClick={() =>
+              window.open(
+                `https://wa.me/541160435283?text=Hola,%20soy%20${encodeURIComponent(useFormData.getState().nombreCompleto)},%20Quiero%20Participar%20en%20Expo%20Desfiles.`,
+                '_blank'
+              )
+            }
+            className="inline-flex items-center rounded-xl bg-topbar px-2 py-1 transition-colors hover:bg-topbar/95"
+          >
+            <span role="img" aria-label="point_down">
+              👉
+            </span>
+            <span className="inline-flex items-center">
+              <IconWhatsapp className="ml-[5px] h-5 w-5 cursor-pointer fill-white" />
+            </span>
+          </button>
+        </p>
       </AlertDialogContent>
     </AlertDialog>
   );

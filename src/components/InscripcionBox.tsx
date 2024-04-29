@@ -1,5 +1,5 @@
 'use client';
-import { useFormSend } from '@/components/Modal';
+import { useFormData, useFormSend } from '@/components/Modal';
 import {
   Popover,
   PopoverContent,
@@ -34,6 +34,7 @@ const InscripcionBox = () => {
     if (!nombreInputRef) return;
     if (!nombreInputRef.current) return;
     setFormSend(true);
+    useFormData.setState({ nombreCompleto: nombreInputRef.current.value });
     const expo_manager_url = await getUrl();
     const expo_manager_username = await getUsername();
     const expo_manager_password = await getPassword();
@@ -59,7 +60,6 @@ const InscripcionBox = () => {
           // Limpiar el input del nombre
           nombreInputRef.current!.value = '';
           setTelefonoValue('');
-          
         }
       })
       .catch((error) => {
@@ -71,7 +71,7 @@ const InscripcionBox = () => {
     setOpen(state.open);
   });
   return (
-    <div className={`border border-black bg-white mt-10 sm:mt-0`}>
+    <div className={`mt-10 border border-black bg-white sm:mt-0`}>
       <div className="w-full bg-topbar">
         <p className="py-1 text-center text-sm text-white md:text-base">
           Rellená estos datos para participar
