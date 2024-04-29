@@ -6,6 +6,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import React, { useEffect, useState } from 'react';
 import { create } from 'zustand';
+import WppLogo from '../../public/images/wpplogo.png';
+import Image from 'next/image';
 
 interface ModalProps {}
 
@@ -54,11 +56,18 @@ const Modal = ({}: ModalProps) => {
           </div>
         </div>
         <p className="text-balance py-8 text-center">
-          Los datos han sido <strong>enviados correctamente</strong>, en unos
-          minutos le llegará un mensaje a su WhatsApp. Si no le ha llegado,
-          envíe nuevamente sus datos, seleccionando correctamente el país en el
-          que está registrado y luego su prefijo.
-        </p>
+    Los datos han sido <strong>enviados correctamente</strong>. Para seguir con el contacto, 
+     mandanos un mensaje por Whatsapp haciendo click acá{' '}
+    <span role="img" aria-label="point_down">👉</span> 
+    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+        <Image
+            src={WppLogo} 
+            alt="WhatsApp Logo" 
+            onClick={() => window.open('https://wa.me/541160435283?text=Hola,%20soy%20(nombre%20completo),%20Quiero%20Participar%20en%20Expo%20Desfiles.', '_blank')} 
+            style={{ cursor: 'pointer', marginLeft: '5px', width: '20px', height: '20px'}} 
+        />
+    </span>
+</p>
       </AlertDialogContent>
     </AlertDialog>
   );
