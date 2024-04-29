@@ -59,7 +59,7 @@ const InscripcionBox = () => {
           // Limpiar el input del nombre
           nombreInputRef.current!.value = '';
           setTelefonoValue('');
-          window.open('https://wa.me/541160435283?text=Hola.%20Estoy%20interesado%20en%20comprar%20un%20USB', '_blank');
+          
         }
       })
       .catch((error) => {
