@@ -91,6 +91,8 @@ const InscripcionBox = () => {
             maxLength={100}
             className={`mt-2 w-full rounded-md border-2 border-topbar p-2 ${open ? 'text-topbar/25' : ''}`}
             placeholder="Nombre/s y apellido/s"
+            pattern="[A-Za-z\s]+"
+            title="Ingrese solo letras y espacios"
             required
           />
           <div className="relative flex w-full flex-col gap-y-1.5 rounded-md border-2 border-topbar px-2 py-1">
@@ -102,6 +104,7 @@ const InscripcionBox = () => {
               onChange={setTelefonoValue}
               defaultCountry="AR"
               countryCallingCodeEditable={false}
+              maxLength={19}
               displayInitialValueAsLocalNumber
               required
             />
