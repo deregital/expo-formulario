@@ -4,10 +4,15 @@ import {
   AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import React, { useEffect, useState } from 'react';
+import IconWhatsapp from '@/components/WhatsappIcon';
+import { useEffect, useState } from 'react';
 import { create } from 'zustand';
 
 interface ModalProps {}
+
+export const useFormData = create<{ nombreCompleto: string }>(() => ({
+  nombreCompleto: '',
+}));
 
 export const useFormSend = create(() => ({
   open: false,
@@ -32,7 +37,7 @@ const Modal = ({}: ModalProps) => {
   return (
     <AlertDialog open={open}>
       <AlertDialogTrigger></AlertDialogTrigger>
-      <AlertDialogOverlay className='bg-topbar/25' />
+      <AlertDialogOverlay className="bg-topbar/25" />
       <AlertDialogContent className="bg-white p-0">
         <div className="flex items-center justify-end bg-topbar px-3 py-1">
           <div
@@ -54,10 +59,25 @@ const Modal = ({}: ModalProps) => {
           </div>
         </div>
         <p className="text-balance py-8 text-center">
-          Los datos han sido <strong>enviados correctamente</strong>, en unos
-          minutos le llegará un mensaje a su WhatsApp. Si no le ha llegado,
-          envíe nuevamente sus datos, seleccionando correctamente el país en el
-          que está registrado y luego su prefijo.
+          Los datos han sido <strong>enviados correctamente</strong>. Para
+          seguir con el contacto, mandanos un mensaje por Whatsapp haciendo
+          click acá{' '}
+          <button
+            onClick={() =>
+              window.open(
+                `https://wa.me/541160435283?text=Hola,%20soy%20${encodeURIComponent(useFormData.getState().nombreCompleto)},%20Quiero%20Participar%20en%20Expo%20Desfiles.`,
+                '_blank'
+              )
+            }
+            className="inline-flex items-center rounded-xl bg-topbar px-2 py-1 transition-colors hover:bg-topbar/95"
+          >
+            <span role="img" aria-label="point_down">
+              👉
+            </span>
+            <span className="inline-flex items-center">
+              <IconWhatsapp className="ml-[5px] h-5 w-5 cursor-pointer fill-white" />
+            </span>
+          </button>
         </p>
       </AlertDialogContent>
     </AlertDialog>
