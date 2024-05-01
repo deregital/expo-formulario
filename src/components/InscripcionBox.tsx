@@ -91,7 +91,7 @@ const InscripcionBox = () => {
             maxLength={100}
             className={`mt-2 w-full rounded-md border-2 border-topbar p-2 ${open ? 'text-topbar/25' : ''}`}
             placeholder="Nombre/s y apellido/s"
-            pattern="[A-Za-z\s]+"
+            pattern="[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+"
             title="Ingrese solo letras y espacios"
             required
           />
@@ -132,7 +132,7 @@ const InscripcionBox = () => {
                       seleccionar el país en el que está registrado
                     </strong>{' '}
                     y luego su prefijo. Por ejemplo, un número que es de
-                    Capital, ingresaría &quot;1108001234&quot;, o si es de La
+                    Capital, ingresaría &quot;91108001234&quot;, o si es de La
                     Plata ingresaría &quot;2217654321&quot;.
                   </p>
                 </PopoverContent>
