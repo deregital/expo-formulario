@@ -48,7 +48,6 @@ const InscripcionBox = () => {
       }),
     })
       .then(async (response) => {
-        // Limpiar el input del telefono
         setError(undefined);
         setFormSend(false);
         if (response.status !== 200 && response.status !== 201) {
@@ -57,7 +56,6 @@ const InscripcionBox = () => {
         } else {
           setError(undefined);
           useFormSend.setState({ open: true });
-          // Limpiar el input del nombre
           nombreInputRef.current!.value = '';
           setTelefonoValue('');
         }
@@ -175,6 +173,7 @@ const InscripcionBox = () => {
             id="mail"
             className="w-full rounded-md border-2 border-topbar p-2"
             placeholder="Correo electrónico"
+            title="El correo electrónico debe contener un '@'."
             required
           />
   
