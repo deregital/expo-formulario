@@ -144,19 +144,17 @@ const InscripcionBox = () => {
             autoComplete="off"
             name="dni"
             id="dni"
-            maxLength={10}
+            maxLength={15}
             pattern="\d*"
             title="Ingrese solo números"
             className="w-full rounded-md border-2 border-topbar p-2"
             placeholder="DNI"
-            required
           />
   
           <select
             name="genero"
             id="genero"
             className="w-full rounded-md border-2 border-topbar p-2"
-            required
           >
             <option value="" disabled selected>
               Selecciona tu género
@@ -174,7 +172,6 @@ const InscripcionBox = () => {
             className="w-full rounded-md border-2 border-topbar p-2"
             placeholder="Correo electrónico"
             title="El correo electrónico debe contener un '@'."
-            required
           />
   
           <input
@@ -184,7 +181,6 @@ const InscripcionBox = () => {
             id="instagram"
             className="w-full rounded-md border-2 border-topbar p-2"
             placeholder="Instagram"
-            required
           />
   
           {error ? (
