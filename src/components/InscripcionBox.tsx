@@ -95,6 +95,7 @@ const InscripcionBox = () => {
             title="Ingrese solo letras y espacios"
             required
           />
+  
           <div className="relative flex w-full flex-col gap-y-1.5 rounded-md border-2 border-topbar px-2 py-1">
             <p className="ml-10 text-xs text-black/50">Número de telefono</p>
             <PhoneInput
@@ -139,6 +140,52 @@ const InscripcionBox = () => {
               </Popover>
             </div>
           </div>
+  
+          <input
+            type="text"
+            autoComplete="off"
+            name="dni"
+            id="dni"
+            maxLength={10}
+            className="w-full rounded-md border-2 border-topbar p-2"
+            placeholder="DNI"
+            required
+          />
+  
+          <select
+            name="genero"
+            id="genero"
+            className="w-full rounded-md border-2 border-topbar p-2"
+            required
+          >
+            <option value="" disabled selected>
+              Selecciona tu género
+            </option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+          </select>
+  
+          <input
+            type="email"
+            autoComplete="off"
+            name="mail"
+            id="mail"
+            className="w-full rounded-md border-2 border-topbar p-2"
+            placeholder="Correo electrónico"
+            required
+          />
+  
+          <input
+            type="text"
+            autoComplete="off"
+            name="instagram"
+            id="instagram"
+            className="w-full rounded-md border-2 border-topbar p-2"
+            placeholder="Instagram"
+            required
+          />
+  
           {error ? (
             <p className="self-start text-xs font-semibold text-red-500">
               Error al enviar el formulario, {error}
