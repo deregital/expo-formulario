@@ -147,6 +147,8 @@ const InscripcionBox = () => {
             name="dni"
             id="dni"
             maxLength={10}
+            pattern="\d*"
+            title="Ingrese solo números"
             className="w-full rounded-md border-2 border-topbar p-2"
             placeholder="DNI"
             required
