@@ -144,7 +144,6 @@ const InscripcionBox = () => {
             autoComplete="off"
             name="dni"
             id="dni"
-            maxLength={15}
             pattern="\d*"
             title="Ingrese solo números"
             className="w-full rounded-md border-2 border-topbar p-2"
