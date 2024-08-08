@@ -6,12 +6,14 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PhoneInput from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
 import { getPassword, getUrl, getUsername } from '@/server/actions';
 import { cn } from '@/lib/utils';
 import { bodoniFont } from '@/lib/fonts';
+import InstagramIcon from '@/components/icons/InstagramIcon';
+import MailIcon from '@/components/icons/MailIcon';
 
 const InscripcionBox = () => {
   const [telefonoValue, setTelefonoValue] = useState<string | undefined>('');
@@ -19,6 +21,8 @@ const InscripcionBox = () => {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
   const [formSend, setFormSend] = useState(false);
+
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleMouseEnter = () => {
     setPopoverOpen(true);
@@ -28,35 +32,48 @@ const InscripcionBox = () => {
     setPopoverOpen(false);
   };
 
-  const nombreInputRef = React.useRef<HTMLInputElement>(null);
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!nombreInputRef) return;
-    if (!nombreInputRef.current) return;
+  async function handleSubmit(formData: FormData) {
+    const nombreCompleto = formData.get('nombreApellido') as string | null;
+    const telefono = telefonoValue;
+    const dni = formData.get('dni') ?? (null as string | null);
+    const genero = formData.get('genero') ?? (null as string | null);
+    const mail = formData.get('mail') ?? (null as string | null);
+    const instagram = formData.get('instagram') ?? (null as string | null);
+
     setFormSend(true);
-    useFormData.setState({ nombreCompleto: nombreInputRef.current.value });
     const expo_manager_url = await getUrl();
     const expo_manager_username = await getUsername();
     const expo_manager_password = await getPassword();
+
     await fetch(`${expo_manager_url}/api/formulario`, {
       method: 'POST',
       body: JSON.stringify({
-        nombreCompleto: nombreInputRef.current.value,
-        telefono: telefonoValue,
         username: expo_manager_username,
         password: expo_manager_password,
+        nombreCompleto,
+        telefono,
+        dni: dni !== '' ? dni : undefined,
+        mail: mail !== '' ? mail : undefined,
+        genero: genero ?? undefined,
+        instagram: instagram !== '' ? instagram : undefined,
       }),
     })
       .then(async (response) => {
+        useFormData.setState({ nombreCompleto: nombreCompleto ?? '' });
         setError(undefined);
         setFormSend(false);
         if (response.status !== 200 && response.status !== 201) {
           const error = await response.json();
-          setError(error.error.toLowerCase());
+
+          const resError = Array.isArray(error.error)
+            ? error.error[0].message
+            : error.error;
+
+          setError(resError.toLowerCase());
         } else {
           setError(undefined);
           useFormSend.setState({ open: true });
-          nombreInputRef.current!.value = '';
+          formRef.current?.reset();
           setTelefonoValue('');
         }
       })
@@ -77,7 +94,8 @@ const InscripcionBox = () => {
       </div>
       <div>
         <form
-          onSubmit={handleSubmit}
+          action={handleSubmit}
+          ref={formRef}
           className="mx-auto flex max-w-[240px] flex-col items-center gap-y-4 p-4 mobileMd:max-w-[280px] mobileLg:max-w-[330px] mobileXl:max-w-[400px] sm:max-w-lg md:max-w-xl"
         >
           <input
@@ -85,7 +103,6 @@ const InscripcionBox = () => {
             autoComplete="off"
             name="nombreApellido"
             id="nombreApellido"
-            ref={nombreInputRef}
             maxLength={100}
             className={`mt-2 w-full rounded-md border-2 border-topbar p-2 ${open ? 'text-topbar/25' : ''}`}
             placeholder="Nombre/s y apellido/s"
@@ -93,7 +110,7 @@ const InscripcionBox = () => {
             title="Ingrese solo letras y espacios"
             required
           />
-  
+
           <div className="relative flex w-full flex-col gap-y-1.5 rounded-md border-2 border-topbar px-2 py-1">
             <p className="ml-10 text-xs text-black/50">Número de telefono</p>
             <PhoneInput
@@ -138,7 +155,7 @@ const InscripcionBox = () => {
               </Popover>
             </div>
           </div>
-  
+
           <input
             type="text"
             autoComplete="off"
@@ -149,39 +166,46 @@ const InscripcionBox = () => {
             className="w-full rounded-md border-2 border-topbar p-2"
             placeholder="DNI"
           />
-  
+
           <select
             name="genero"
             id="genero"
+            defaultValue={'vacio'}
             className="w-full rounded-md border-2 border-topbar p-2"
           >
-            <option value="" disabled selected>
+            <option value="vacio" disabled>
               Selecciona tu género
             </option>
             <option value="Masculino">Masculino</option>
             <option value="Femenino">Femenino</option>
             <option value="Otro">Otro</option>
           </select>
-  
-          <input
-            type="email"
-            autoComplete="off"
-            name="mail"
-            id="mail"
-            className="w-full rounded-md border-2 border-topbar p-2"
-            placeholder="Correo electrónico"
-            title="El correo electrónico debe contener un '@'."
-          />
-  
-          <input
-            type="text"
-            autoComplete="off"
-            name="instagram"
-            id="instagram"
-            className="w-full rounded-md border-2 border-topbar p-2"
-            placeholder="Instagram"
-          />
-  
+
+          <div className="relative w-full">
+            <MailIcon className="absolute inset-y-[50%] left-2 h-6 w-6 -translate-y-1/2 text-topbar" />
+            <input
+              type="email"
+              autoComplete="off"
+              name="mail"
+              id="mail"
+              className="peer w-full rounded-md border-2 border-topbar p-2 pl-10"
+              placeholder="Correo electrónico"
+              title="El correo electrónico debe contener un '@'."
+            />
+          </div>
+
+          <div className="relative w-full">
+            <InstagramIcon className="absolute inset-y-[50%] left-2 h-6 w-6 -translate-y-1/2 text-topbar" />
+            <input
+              type="text"
+              autoComplete="off"
+              name="instagram"
+              id="instagram"
+              className="peer w-full rounded-md border-2 border-topbar p-2 pl-10"
+              placeholder="Instagram"
+            />
+          </div>
+
           {error ? (
             <p className="self-start text-xs font-semibold text-red-500">
               Error al enviar el formulario, {error}
