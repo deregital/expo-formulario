@@ -7,16 +7,23 @@ import {
 } from '@/components/ui/popover';
 import Image from 'next/image';
 import React, { useRef, useState } from 'react';
-import PhoneInput from 'react-phone-number-input';
+import PhoneInput, { type Value } from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
 import { getPassword, getUrl, getUsername } from '@/server/actions';
 import { cn } from '@/lib/utils';
 import { bodoniFont } from '@/lib/fonts';
 import InstagramIcon from '@/components/icons/InstagramIcon';
 import MailIcon from '@/components/icons/MailIcon';
+import {
+  parseIncompletePhoneNumber,
+  parsePhoneNumber,
+} from 'libphonenumber-js';
 
 const InscripcionBox = () => {
   const [telefonoValue, setTelefonoValue] = useState<string | undefined>('');
+  const [telefonoParseado, setTelefonoParseado] = useState<string | undefined>(
+    ''
+  );
   const [open, setOpen] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
@@ -34,7 +41,7 @@ const InscripcionBox = () => {
 
   async function handleSubmit(formData: FormData) {
     const nombreCompleto = formData.get('nombreApellido') as string | null;
-    const telefono = telefonoValue;
+    const telefono = telefonoParseado;
     const dni = formData.get('dni') ?? (null as string | null);
     const genero = formData.get('genero') ?? (null as string | null);
     const mail = formData.get('mail') ?? (null as string | null);
@@ -69,7 +76,7 @@ const InscripcionBox = () => {
             ? error.error[0].message
             : error.error;
 
-          setError(resError.toLowerCase());
+          setError(resError);
         } else {
           setError(undefined);
           useFormSend.setState({ open: true });
@@ -117,7 +124,27 @@ const InscripcionBox = () => {
               placeholder="Número de Teléfono"
               international
               value={telefonoValue}
-              onChange={setTelefonoValue}
+              onChange={(value) => {
+                if (value === undefined) {
+                  setTelefonoValue('');
+                  return;
+                }
+                try {
+                  const parsed = parsePhoneNumber(value);
+                  if (parsed) {
+                    const telefonoCon9 =
+                      parsed.countryCallingCode === '54'
+                        ? parsed.countryCallingCode +
+                          '9' +
+                          parsed.nationalNumber
+                        : value;
+
+                    setTelefonoParseado(telefonoCon9);
+                  }
+                } catch (error) {
+                  // console.log(value, error);
+                }
+              }}
               defaultCountry="AR"
               countryCallingCodeEditable={false}
               maxLength={19}
@@ -148,7 +175,7 @@ const InscripcionBox = () => {
                       seleccionar el país en el que está registrado
                     </strong>{' '}
                     y luego su prefijo. Por ejemplo, un número que es de
-                    Capital, ingresaría &quot;91108001234&quot;, o si es de La
+                    Capital, ingresaría &quot;1108001234&quot;, o si es de La
                     Plata ingresaría &quot;2217654321&quot;.
                   </p>
                 </PopoverContent>
