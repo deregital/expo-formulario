@@ -14,10 +14,7 @@ import { cn } from '@/lib/utils';
 import { bodoniFont } from '@/lib/fonts';
 import InstagramIcon from '@/components/icons/InstagramIcon';
 import MailIcon from '@/components/icons/MailIcon';
-import {
-  parseIncompletePhoneNumber,
-  parsePhoneNumber,
-} from 'libphonenumber-js';
+import { parsePhoneNumber } from 'libphonenumber-js';
 
 const InscripcionBox = () => {
   const [telefonoValue, setTelefonoValue] = useState<string | undefined>('');
@@ -42,10 +39,15 @@ const InscripcionBox = () => {
   async function handleSubmit(formData: FormData) {
     const nombreCompleto = formData.get('nombreApellido') as string | null;
     const telefono = telefonoParseado;
-    const dni = formData.get('dni') ?? (null as string | null);
-    const genero = formData.get('genero') ?? (null as string | null);
-    const mail = formData.get('mail') ?? (null as string | null);
-    const instagram = formData.get('instagram') ?? (null as string | null);
+    const dni = (formData.get('dni') ?? null) as string | null;
+    const genero = (formData.get('genero') ?? null) as string | null;
+    const mail = (formData.get('mail') ?? null) as string | null;
+    const instagramFull = (formData.get('instagram') ?? null) as string | null;
+    const instagram = instagramFull
+      ? instagramFull?.startsWith('@')
+        ? instagramFull.slice(1)
+        : instagramFull
+      : '';
 
     setFormSend(true);
     const expo_manager_url = await getUrl();
@@ -81,7 +83,8 @@ const InscripcionBox = () => {
           setError(undefined);
           useFormSend.setState({ open: true });
           formRef.current?.reset();
-          setTelefonoValue('');
+          setTelefonoParseado('');
+          setTelefonoValue(undefined);
         }
       })
       .catch((error) => {
