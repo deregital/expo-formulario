@@ -42,6 +42,7 @@ const InscripcionBox = () => {
     const dni = (formData.get('dni') ?? null) as string | null;
     const genero = (formData.get('genero') ?? null) as string | null;
     const mail = (formData.get('mail') ?? null) as string | null;
+    const fechaNacimiento = formData.get('fechaNacimiento') as string | null; 
     const instagramFull = (formData.get('instagram') ?? null) as string | null;
     const instagram = instagramFull
       ? instagramFull?.startsWith('@')
@@ -64,6 +65,7 @@ const InscripcionBox = () => {
         dni: dni !== '' ? dni : undefined,
         mail: mail !== '' ? mail : undefined,
         genero: genero ?? undefined,
+        fechaNacimiento: fechaNacimiento ?? undefined,
         instagram: instagram !== '' ? instagram : undefined,
       }),
     })
@@ -196,6 +198,18 @@ const InscripcionBox = () => {
             className="w-full rounded-md border-2 border-topbar p-2"
             placeholder="DNI"
           />
+          
+          <div className="relative flex w-full flex-col gap-y-1 rounded-md border-2 border-topbar px-2 py-1">
+          <p className="ml-2 text-xs text-black/50">Fecha de Nacimiento</p>
+          <input
+          type="date"
+          name="fechaNacimiento"
+          id="fechaNacimiento"
+          className="w-full rounded-md border-none p-1 text-sm"
+          title="Fecha de Nacimiento"
+          />
+</div>
+
 
           <select
             name="genero"
