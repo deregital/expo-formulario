@@ -12,9 +12,9 @@ const Information = () => {
       >
         ¿QUERÉS DESFILAR?
       </h1>
-      <p className="text-balance pt-2 text-xs md:text-base xl:pt-3 2xl:pt-5">
-        En Expo Desfiles tenemos la oportunidad que estabas esperando. Vas a
-        recibir entrenamientos y vas a poder desfilar <strong>¡GRATIS!</strong>
+      <p className="text-balance pt-2 text-base md:text-lg xl:pt-3 2xl:pt-5">
+        En Expo Desfiles tenemos la oportunidad que estabas esperando.
+        {/* Vas a recibir entrenamientos y vas a poder desfilar <strong>¡GRATIS!</strong> */}
       </p>
       <h3
         className={cn(

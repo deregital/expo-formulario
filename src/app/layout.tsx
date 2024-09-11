@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          'relative min-h-screen h-auto w-screen overflow-y-auto',
+          'relative h-auto min-h-screen w-screen overflow-y-auto overflow-x-hidden',
           poppinsFont.className
         )}
       >
