@@ -211,12 +211,30 @@ const InscripcionBox = () => {
       <PhoneInput
         placeholder="Número de Teléfono Secundario"
         international
-        value={telefonoSecundarioValue}
-        onChange={setTelefonoSecundarioValue}
-        defaultCountry="AR"
-        countryCallingCodeEditable={false}
-        maxLength={19}
-        displayInitialValueAsLocalNumber
+      value={telefonoValue}
+      onChange={(value) => {
+        if (!value) {
+          setTelefonoSecundarioValue('');
+          return;
+        }
+        try {
+          const parsed = parsePhoneNumber(value);
+          if (parsed) {
+            const telefonoCon9 =
+              parsed.countryCallingCode === '54' &&
+              !parsed.nationalNumber.startsWith('9')
+                ? parsed.countryCallingCode + '9' + parsed.nationalNumber
+                : value;
+            setTelefonoParseado(telefonoCon9);
+          }
+        } catch (error) {
+          console.log(value, error);
+        }
+      }}
+      defaultCountry="AR"
+      countryCallingCodeEditable={false}
+      maxLength={19}
+      displayInitialValueAsLocalNumber
       />
     </div>
   )}
