@@ -14,7 +14,7 @@ import Image from 'next/image';
 import { useRef, useState, useEffect } from 'react';
 import PhoneInput from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
-import { Country, ICountry, IState, State } from 'country-state-city';
+import { Country, ICity, ICountry, IState, State } from 'country-state-city';
 
 const InscripcionBox = () => {
   const [telefonoValue, setTelefonoValue] = useState<string | undefined>('');
@@ -28,6 +28,10 @@ const InscripcionBox = () => {
   const [states, setStates] = useState<NonNullable<IState[]>>([]);
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedState, setSelectedState] = useState('');
+  const [argentineProvinces, setArgentineProvinces] = useState<NonNullable<IState[]>>(State.getStatesOfCountry('AR'));
+  const [selectedArgentineProvince, setSelectedArgentineProvince] = useState('');
+  const [cities, setCities] = useState<NonNullable<ICity[]>>([]);
+  const [selectedCity, setSelectedCity] = useState('');
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -340,6 +344,44 @@ const InscripcionBox = () => {
                 {states.map((state) => (
                   <option key={state.isoCode} value={state.isoCode}>
                     {state.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          {/* Lugar de residencia seleccionando Provincia y Localidad siendo el país Argentina */}
+          <div className="w-full">
+            <h3 className="text-base mb-1">Lugar de residencia (Argentina)</h3>
+            <div className="flex flex-col md:flex-row w-full justify-between items-center gap-y-2 md:gap-y-0">
+              <select
+                name="argentineProvince"
+                id="argentineProvince"
+                value={selectedArgentineProvince}
+                onChange={(e) => setSelectedArgentineProvince(e.target.value)}
+                className="w-full md:w-[48%] rounded-md border-2 border-topbar p-2"
+                required
+              >
+                <option value="">Selecciona tu provincia</option>
+                {argentineProvinces.map((province) => (
+                  <option key={province.isoCode} value={province.isoCode}>
+                    {province.name}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                name="city"
+                id="city"
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+                className="w-full md:w-[48%] rounded-md border-2 border-topbar p-2"
+                disabled={!selectedArgentineProvince}
+                required
+              >
+                <option value="">Selecciona tu localidad</option>
+                {cities.map((city) => (
+                  <option key={city.name} value={city.name}>
+                    {city.name}
                   </option>
                 ))}
               </select>
