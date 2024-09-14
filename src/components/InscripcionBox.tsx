@@ -14,7 +14,8 @@ import Image from 'next/image';
 import { useRef, useState, useEffect } from 'react';
 import PhoneInput from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
-import { Country, ICity, ICountry, IState, State } from 'country-state-city';
+import { City, Country, ICity, ICountry, IState, State } from 'country-state-city';
+import { trpc } from '@/lib/trpc';
 
 const InscripcionBox = () => {
   const [telefonoValue, setTelefonoValue] = useState<string | undefined>('');
@@ -30,8 +31,10 @@ const InscripcionBox = () => {
   const [selectedState, setSelectedState] = useState('');
   const [argentineProvinces, setArgentineProvinces] = useState<NonNullable<IState[]>>(State.getStatesOfCountry('AR'));
   const [selectedArgentineProvince, setSelectedArgentineProvince] = useState('');
-  const [cities, setCities] = useState<NonNullable<ICity[]>>([]);
   const [selectedCity, setSelectedCity] = useState('');
+  const { data: citiesData } = trpc.localidades.getLocalidadesByState.useQuery(selectedArgentineProvince, {
+    enabled: !!selectedArgentineProvince
+  })
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -73,8 +76,6 @@ const InscripcionBox = () => {
     const fechaNacimientoString = formData.get('fechaNacimiento') as string | null;
     const instagramFull = (formData.get('instagram') ?? null) as string | null;
     const instagram = instagramFull ? (instagramFull.startsWith('@') ? instagramFull.slice(1) : instagramFull) : '';
-    const country = selectedCountry;
-    const state = selectedState;
 
     const fechaNacimiento = fechaNacimientoString
       ? new Date(
@@ -100,8 +101,6 @@ const InscripcionBox = () => {
         genero: genero ?? undefined,
         fechaNacimiento: fechaNacimiento ?? undefined,
         instagram: instagram !== '' ? instagram : undefined,
-        country,
-        state,
       }),
     })
       .then(async (response) => {
@@ -363,7 +362,7 @@ const InscripcionBox = () => {
               >
                 <option value="">Selecciona tu provincia</option>
                 {argentineProvinces.map((province) => (
-                  <option key={province.isoCode} value={province.isoCode}>
+                  <option key={province.isoCode} value={province.name}>
                     {province.name}
                   </option>
                 ))}
@@ -379,9 +378,9 @@ const InscripcionBox = () => {
                 required
               >
                 <option value="">Selecciona tu localidad</option>
-                {cities.map((city) => (
-                  <option key={city.name} value={city.name}>
-                    {city.name}
+                {citiesData && citiesData[0].map((city) => (
+                  <option key={city.id} value={city.nombre}>
+                    {city.nombre}
                   </option>
                 ))}
               </select>
