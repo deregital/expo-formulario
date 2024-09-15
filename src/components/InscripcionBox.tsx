@@ -16,6 +16,7 @@ import PhoneInput from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
 import { City, Country, ICity, ICountry, IState, State } from 'country-state-city';
 import { trpc } from '@/lib/trpc';
+import { Localidad } from '@/server';
 
 const InscripcionBox = () => {
   const [telefonoValue, setTelefonoValue] = useState<string | undefined>('');
@@ -101,6 +102,10 @@ const InscripcionBox = () => {
         genero: genero ?? undefined,
         fechaNacimiento: fechaNacimiento ?? undefined,
         instagram: instagram !== '' ? instagram : undefined,
+        pais: selectedCountry,
+        provincia: selectedState,
+        provinciaArgentina: selectedArgentineProvince,
+        localidad: citiesData && citiesData[0].find((city) => city.nombre === selectedCity),
       }),
     })
       .then(async (response) => {
@@ -378,7 +383,7 @@ const InscripcionBox = () => {
                 onChange={(e) => setSelectedCity(e.target.value)}
                 className="w-full md:w-[48%] rounded-md border-2 border-topbar p-2"
                 disabled={!selectedArgentineProvince}
-                required
+                required={selectedCity !== ''}
               >
                 <option value="">Selecciona tu localidad</option>
                 {citiesData && citiesData[0].map((city) => (
