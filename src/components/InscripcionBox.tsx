@@ -356,7 +356,10 @@ const InscripcionBox = () => {
                 name="argentineProvince"
                 id="argentineProvince"
                 value={selectedArgentineProvince}
-                onChange={(e) => setSelectedArgentineProvince(e.target.value)}
+                onChange={(e) => {
+                  setSelectedArgentineProvince(e.target.value)
+                  setSelectedCity('')
+                }}
                 className="w-full md:w-[48%] rounded-md border-2 border-topbar p-2"
                 required
               >
