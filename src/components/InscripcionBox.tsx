@@ -14,15 +14,27 @@ import Image from 'next/image';
 import { useRef, useState, useEffect } from 'react';
 import PhoneInput from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
-import { City, Country, ICity, ICountry, IState, State } from 'country-state-city';
+import {
+  City,
+  Country,
+  ICity,
+  ICountry,
+  IState,
+  State,
+} from 'country-state-city';
 import { trpc } from '@/lib/trpc';
 import { Localidad } from '@/server';
 
 const InscripcionBox = () => {
   const [telefonoValue, setTelefonoValue] = useState<string | undefined>('');
-  const [telefonoParseado, setTelefonoParseado] = useState<string | undefined>('');
-  const [telefonoSecundarioVisible, setTelefonoSecundarioVisible] = useState(false);
-  const [telefonoSecundarioValue, setTelefonoSecundarioValue] = useState<string | undefined>('');
+  const [telefonoParseado, setTelefonoParseado] = useState<string | undefined>(
+    ''
+  );
+  const [telefonoSecundarioVisible, setTelefonoSecundarioVisible] =
+    useState(false);
+  const [telefonoSecundarioValue, setTelefonoSecundarioValue] = useState<
+    string | undefined
+  >('');
   const [open, setOpen] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
@@ -30,12 +42,18 @@ const InscripcionBox = () => {
   const [states, setStates] = useState<NonNullable<IState[]>>([]);
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedState, setSelectedState] = useState('');
-  const [argentineProvinces, setArgentineProvinces] = useState<NonNullable<IState[]>>(State.getStatesOfCountry('AR'));
-  const [selectedArgentineProvince, setSelectedArgentineProvince] = useState('');
+  const [argentineProvinces, setArgentineProvinces] = useState<
+    NonNullable<IState[]>
+  >(State.getStatesOfCountry('AR'));
+  const [selectedArgentineProvince, setSelectedArgentineProvince] =
+    useState('');
   const [selectedCity, setSelectedCity] = useState('');
-  const { data: citiesData } = trpc.localidades.getLocalidadesByState.useQuery(selectedArgentineProvince, {
-    enabled: !!selectedArgentineProvince
-  })
+  const { data: citiesData } = trpc.localidades.getLocalidadesByState.useQuery(
+    selectedArgentineProvince,
+    {
+      enabled: !!selectedArgentineProvince,
+    }
+  );
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -50,7 +68,7 @@ const InscripcionBox = () => {
   const toggleTelefonoSecundario = () => {
     setTelefonoSecundarioVisible(!telefonoSecundarioVisible);
     if (!telefonoSecundarioVisible) {
-      setTelefonoSecundarioValue(''); 
+      setTelefonoSecundarioValue('');
     }
   };
 
@@ -70,18 +88,28 @@ const InscripcionBox = () => {
   async function handleSubmit(formData: FormData) {
     const nombreCompleto = formData.get('nombreApellido') as string | null;
     const telefono = telefonoParseado;
-    const telefonoSecundario = telefonoSecundarioVisible ? telefonoSecundarioValue : undefined;
+    const telefonoSecundario = telefonoSecundarioVisible
+      ? telefonoSecundarioValue
+      : undefined;
     const dni = (formData.get('dni') ?? null) as string | null;
     const genero = (formData.get('genero') ?? null) as string | null;
     const mail = (formData.get('mail') ?? null) as string | null;
-    const fechaNacimientoString = formData.get('fechaNacimiento') as string | null;
+    const fechaNacimientoString = formData.get('fechaNacimiento') as
+      | string
+      | null;
     const instagramFull = (formData.get('instagram') ?? null) as string | null;
-    const instagram = instagramFull ? (instagramFull.startsWith('@') ? instagramFull.slice(1) : instagramFull) : '';
+    const instagram = instagramFull
+      ? instagramFull.startsWith('@')
+        ? instagramFull.slice(1)
+        : instagramFull
+      : '';
 
     const fechaNacimiento = fechaNacimientoString
       ? new Date(
           new Date(fechaNacimientoString).getTime() +
-            Math.abs(new Date(fechaNacimientoString).getTimezoneOffset() * 60000)
+            Math.abs(
+              new Date(fechaNacimientoString).getTimezoneOffset() * 60000
+            )
         ).toISOString()
       : undefined;
 
@@ -105,7 +133,9 @@ const InscripcionBox = () => {
         pais: selectedCountry,
         provincia: selectedState,
         provinciaArgentina: selectedArgentineProvince,
-        localidad: citiesData && citiesData[0].find((city) => city.nombre === selectedCity),
+        localidad:
+          citiesData &&
+          citiesData[0].find((city) => city.nombre === selectedCity),
       }),
     })
       .then(async (response) => {
@@ -123,7 +153,7 @@ const InscripcionBox = () => {
           formRef.current?.reset();
           setTelefonoParseado('');
           setTelefonoValue(undefined);
-          setTelefonoSecundarioVisible(false); 
+          setTelefonoSecundarioVisible(false);
           setSelectedCountry('');
           setSelectedState('');
         }
@@ -182,7 +212,9 @@ const InscripcionBox = () => {
                     const telefonoCon9 =
                       parsed.countryCallingCode === '54' &&
                       !parsed.nationalNumber.startsWith('9')
-                        ? parsed.countryCallingCode + '9' + parsed.nationalNumber
+                        ? parsed.countryCallingCode +
+                          '9' +
+                          parsed.nationalNumber
                         : value;
                     setTelefonoParseado(telefonoCon9);
                   }
@@ -201,8 +233,12 @@ const InscripcionBox = () => {
               <button
                 type="button"
                 onClick={toggleTelefonoSecundario}
-                className="hover:cursor-pointer text-xl font-bold"
-                title={telefonoSecundarioVisible ? "Ocultar teléfono secundario" : "Agregar teléfono secundario"}
+                className="text-xl font-bold hover:cursor-pointer"
+                title={
+                  telefonoSecundarioVisible
+                    ? 'Ocultar teléfono secundario'
+                    : 'Agregar teléfono secundario'
+                }
               >
                 {telefonoSecundarioVisible ? '-' : '+'}
               </button>
@@ -225,8 +261,10 @@ const InscripcionBox = () => {
                 >
                   <p>
                     Para enviar su número de teléfono correctamente deberá{' '}
-                    <strong>seleccionar el país en el que está registrado</strong> y
-                    luego su prefijo.
+                    <strong>
+                      seleccionar el país en el que está registrado
+                    </strong>{' '}
+                    y luego su prefijo.
                   </p>
                 </PopoverContent>
               </Popover>
@@ -235,7 +273,9 @@ const InscripcionBox = () => {
 
           {telefonoSecundarioVisible && (
             <div className="relative flex w-full flex-col gap-y-1.5 rounded-md border-2 border-topbar px-2 py-1">
-              <p className="ml-10 text-xs text-black/50">Número de teléfono secundario</p>
+              <p className="ml-10 text-xs text-black/50">
+                Número de teléfono secundario
+              </p>
               <PhoneInput
                 placeholder="Número de Teléfono Secundario"
                 international
@@ -317,14 +357,14 @@ const InscripcionBox = () => {
           </div>
           {/* Nacionalidad con Select para País y Provincia */}
           <div className="w-full">
-            <h3 className="text-base mb-1">Nacionalidad</h3>
-            <div className="flex flex-col md:flex-row w-full justify-between items-center gap-y-2 md:gap-y-0">
+            <h3 className="mb-1 text-base">Nacionalidad</h3>
+            <div className="flex w-full flex-col items-center justify-between gap-y-2 md:flex-row md:gap-y-0">
               <select
                 name="country"
                 id="country"
                 value={selectedCountry}
                 onChange={(e) => setSelectedCountry(e.target.value)}
-                className="w-full md:w-[48%] rounded-md border-2 border-topbar p-2"
+                className="w-full rounded-md border-2 border-topbar p-2 md:w-[48%]"
                 required
               >
                 <option value="">Selecciona tu país</option>
@@ -340,32 +380,36 @@ const InscripcionBox = () => {
                 id="state"
                 value={selectedState}
                 onChange={(e) => setSelectedState(e.target.value)}
-                className="w-full md:w-[48%] rounded-md border-2 border-topbar p-2"
+                className="w-full rounded-md border-2 border-topbar p-2 md:w-[48%]"
                 disabled={!selectedCountry}
                 required
               >
                 <option value="">Selecciona tu provincia/estado</option>
-                {states.map((state) => (
-                  <option key={state.isoCode} value={state.isoCode}>
-                    {state.name}
-                  </option>
-                ))}
+                {states
+                  .sort((a, b) => {
+                    return a.name.localeCompare(b.name);
+                  })
+                  .map((state) => (
+                    <option key={state.isoCode} value={state.isoCode}>
+                      {state.name}
+                    </option>
+                  ))}
               </select>
             </div>
           </div>
           {/* Lugar de residencia seleccionando Provincia y Localidad siendo el país Argentina */}
           <div className="w-full">
-            <h3 className="text-base mb-1">Lugar de residencia (Argentina)</h3>
-            <div className="flex flex-col md:flex-row w-full justify-between items-center gap-y-2 md:gap-y-0">
+            <h3 className="mb-1 text-base">Lugar de residencia (Argentina)</h3>
+            <div className="flex w-full flex-col items-center justify-between gap-y-2 md:flex-row md:gap-y-0">
               <select
                 name="argentineProvince"
                 id="argentineProvince"
                 value={selectedArgentineProvince}
                 onChange={(e) => {
-                  setSelectedArgentineProvince(e.target.value)
-                  setSelectedCity('')
+                  setSelectedArgentineProvince(e.target.value);
+                  setSelectedCity('');
                 }}
-                className="w-full md:w-[48%] rounded-md border-2 border-topbar p-2"
+                className="w-full rounded-md border-2 border-topbar p-2 md:w-[48%]"
                 required
               >
                 <option value="">Selecciona tu provincia</option>
@@ -381,16 +425,21 @@ const InscripcionBox = () => {
                 id="city"
                 value={selectedCity}
                 onChange={(e) => setSelectedCity(e.target.value)}
-                className="w-full md:w-[48%] rounded-md border-2 border-topbar p-2"
+                className="w-full rounded-md border-2 border-topbar p-2 md:w-[48%]"
                 disabled={!selectedArgentineProvince}
                 required={selectedCity !== ''}
               >
                 <option value="">Selecciona tu localidad</option>
-                {citiesData && citiesData[0].map((city) => (
-                  <option key={city.id} value={city.nombre}>
-                    {city.nombre}
-                  </option>
-                ))}
+                {citiesData &&
+                  citiesData[0]
+                    .sort((a, b) => {
+                      return a.nombre.localeCompare(b.nombre);
+                    })
+                    .map((city) => (
+                      <option key={city.id} value={city.nombre}>
+                        {city.nombre}
+                      </option>
+                    ))}
               </select>
             </div>
           </div>
