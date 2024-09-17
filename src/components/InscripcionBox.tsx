@@ -23,7 +23,6 @@ import {
   State,
 } from 'country-state-city';
 import { trpc } from '@/lib/trpc';
-import { Localidad } from '@/server';
 
 const InscripcionBox = () => {
   const [telefonoValue, setTelefonoValue] = useState<string | undefined>('');
@@ -134,8 +133,11 @@ const InscripcionBox = () => {
         provincia: selectedState,
         provinciaArgentina: selectedArgentineProvince,
         localidad:
-          citiesData &&
-          citiesData[0].find((city) => city.nombre === selectedCity),
+          citiesData && {
+            nombre: citiesData[0].find((city) => city.nombre === selectedCity)?.nombre,
+            latitud: citiesData[0].find((city) => city.nombre === selectedCity)?.centroide.lat,
+            longitud: citiesData[0].find((city) => city.nombre === selectedCity)?.centroide.lon,
+          },
       }),
     })
       .then(async (response) => {
