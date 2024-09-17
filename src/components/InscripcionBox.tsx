@@ -72,7 +72,8 @@ const InscripcionBox = () => {
   };
 
   useEffect(() => {
-    setCountries(Country.getAllCountries());
+    const countries = Country.getAllCountries().filter((country) => country.name !== 'Palestinian Territory Occupied');
+    setCountries(countries);
   }, []);
 
   useEffect(() => {
