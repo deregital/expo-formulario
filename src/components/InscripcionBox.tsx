@@ -15,9 +15,7 @@ import { useRef, useState, useEffect } from 'react';
 import PhoneInput from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
 import {
-  City,
   Country,
-  ICity,
   ICountry,
   IState,
   State,
@@ -135,9 +133,9 @@ const InscripcionBox = () => {
         provinciaArgentina: selectedArgentineProvince,
         localidad:
           citiesData && {
-            nombre: citiesData[0].find((city) => city.nombre === selectedCity)?.nombre,
-            latitud: citiesData[0].find((city) => city.nombre === selectedCity)?.centroide.lat,
-            longitud: citiesData[0].find((city) => city.nombre === selectedCity)?.centroide.lon,
+            nombre: citiesData.find((city) => city.nombre === selectedCity)?.nombre,
+            latitud: citiesData.find((city) => city.nombre === selectedCity)?.centroide.lat,
+            longitud: citiesData.find((city) => city.nombre === selectedCity)?.centroide.lon,
           },
       }),
     })
@@ -434,7 +432,7 @@ const InscripcionBox = () => {
               >
                 <option value="">Selecciona tu localidad</option>
                 {citiesData &&
-                  citiesData[0]
+                  citiesData
                     .sort((a, b) => {
                       return a.nombre.localeCompare(b.nombre);
                     })
