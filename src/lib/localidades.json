@@ -104859,32 +104859,6 @@
         }
       },
       {
-        "id": "02014010",
-        "nombre": "Ciudad de Buenos Aires",
-        "fuente": "INDEC",
-        "provincia": {
-          "id": "02",
-          "nombre": "Ciudad Autónoma de Buenos Aires"
-        },
-        "departamento": {
-          "id": "02014",
-          "nombre": "Comuna 2"
-        },
-        "municipio": {
-          "id": "022007",
-          "nombre": "Comuna 1"
-        },
-        "localidad_censal": {
-          "id": "02000010",
-          "nombre": "Ciudad Autónoma de Buenos Aires"
-        },
-        "categoria": "Componente de localidad compuesta",
-        "centroide": {
-          "lon": -58.3721346807736,
-          "lat": -34.608416378045
-        }
-      },
-      {
         "id": "94008010",
         "nombre": "Río Grande",
         "fuente": "INDEC",
