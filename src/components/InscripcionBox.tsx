@@ -385,7 +385,7 @@ const InscripcionBox = () => {
                 disabled={!selectedCountry}
                 required
               >
-                <option value="">Selecciona tu provincia/estado</option>
+                <option value="">Selecciona tu provincia</option>
                 {states
                   .sort((a, b) => {
                     return a.name.localeCompare(b.name);
