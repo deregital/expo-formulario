@@ -7,5 +7,5 @@
 1. Clonar el repositorio con `git clone https://github.com/expomanager/expo-formulario.git`
 2. Instalar las dependencias con `npm install`
 3. Crear el archivo `.env` con la misma estructura que el archivo `.env.example`, pidiendo credenciales correspondientes
-4. Correr el comando `npx prisma generate` para generar los tipos de prisma
+4. Correr el comando `npx prisma generate` para generar los tipos de prisma.
 5. Correr el comando `npm run dev` para correr el proyecto en modo desarrollo.
