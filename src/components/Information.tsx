@@ -24,6 +24,14 @@ const Information = () => {
       >
         ¿Te interesa?
       </h3>
+      <h2
+        className={cn(
+          'text-balance text-[25px] md:text-[30px] xl:text-[35px] 2xl:text-[40px] sm:pb-3',
+          bodoniFont.className
+        )}
+      >
+        EXCLUSIVO PARA MAYORES DE 18 AÑOS
+      </h2>
     </div>
   );
 };
