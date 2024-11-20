@@ -11,7 +11,7 @@ import {
 import { getPassword, getUrl, getUsername } from '@/server/actions';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import Image from 'next/image';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useMemo } from 'react';
 import PhoneInput from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
 import {
@@ -21,6 +21,9 @@ import {
   State,
 } from 'country-state-city';
 import { trpc } from '@/lib/trpc';
+import { fetchClient } from '@/server/fetchClient';
+import { LocalidadesJson } from '@/server';
+import { TRPCError } from '@trpc/server';
 
 const InscripcionBox = () => {
   const [telefonoValue, setTelefonoValue] = useState<string | undefined>('');
@@ -45,12 +48,20 @@ const InscripcionBox = () => {
   const [selectedArgentineProvince, setSelectedArgentineProvince] =
     useState('');
   const [selectedCity, setSelectedCity] = useState('');
-  const { data: citiesData } = trpc.localidades.getLocalidadesByState.useQuery(
-    selectedArgentineProvince,
-    {
-      enabled: !!selectedArgentineProvince,
+  const citiesData = useMemo(() => {
+    const localidades: LocalidadesJson = require('../lib/localidades.json');
+    const localidadesByState = localidades.localidades.filter((localidad) => localidad.provincia.nombre === selectedArgentineProvince);
+    if (localidadesByState.length === 0) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'No se encontraron localidades' });
     }
-  );
+    return localidadesByState.map((localidad) => {
+      return {
+        id: localidad.id,
+        nombre: localidad.nombre,
+        centroide: localidad.centroide,
+      }
+    });
+  }, [selectedArgentineProvince]);
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -115,53 +126,99 @@ const InscripcionBox = () => {
     const expo_manager_username = await getUsername();
     const expo_manager_password = await getPassword();
 
-    await fetch(`${expo_manager_url}/api/formulario`, {
-      method: 'POST',
-      body: JSON.stringify({
-        username: expo_manager_username,
-        password: expo_manager_password,
-        nombreCompleto,
-        telefono,
-        telefonoSecundario: telefonoSecundario || undefined,
-        dni: dni !== '' ? dni : undefined,
-        mail: mail !== '' ? mail : undefined,
-        genero: genero ?? undefined,
-        fechaNacimiento: fechaNacimiento ?? undefined,
-        instagram: instagram !== '' ? instagram : undefined,
-        pais: selectedCountry,
-        provincia: selectedState,
-        provinciaArgentina: selectedArgentineProvince,
-        localidad:
-          citiesData && {
-            nombre: citiesData.find((city) => city.nombre === selectedCity)?.nombre,
-            latitud: citiesData.find((city) => city.nombre === selectedCity)?.centroide.lat,
-            longitud: citiesData.find((city) => city.nombre === selectedCity)?.centroide.lon,
-          },
-      }),
-    })
-      .then(async (response) => {
-        useFormData.setState({ nombreCompleto: nombreCompleto ?? '' });
-        setError(undefined);
-        if (response.status !== 200 && response.status !== 201) {
-          const error = await response.json();
-          const resError = Array.isArray(error.error)
-            ? error.error[0].message
-            : error.error;
-          setError(resError);
-        } else {
-          setError(undefined);
-          useFormSend.setState({ open: true });
-          formRef.current?.reset();
-          setTelefonoParseado('');
-          setTelefonoValue(undefined);
-          setTelefonoSecundarioVisible(false);
-          setSelectedCountry('');
-          setSelectedState('');
+    await fetchClient.POST('/profile/create', {
+      body: {
+        profile: {
+          birthDate: fechaNacimiento ?? null,
+          dni: dni ?? null,
+          fullName: nombreCompleto ?? '',
+          gender: genero ?? null,
+          instagram: instagram ?? null,
+          mail: mail ?? null,
+          phoneNumber: telefono ?? '',
+          secondaryPhoneNumber: telefonoSecundario ?? null,
+          alternativeNames: [],
+          profilePictureUrl: null,
+          residence: {
+            city: selectedCity ?? '',
+            country: selectedCountry ?? '',
+            latitude: citiesData?.find((city) => city.nombre === selectedCity)?.centroide.lat ?? 0,
+            longitude: citiesData?.find((city) => city.nombre === selectedCity)?.centroide.lon ?? 0,
+            state: selectedState ?? '',
+          }
         }
-      })
-      .catch((error) => {
-        setError(error.message);
-      });
+      }
+    })
+    .then(async (response) => {
+      useFormData.setState({ nombreCompleto: nombreCompleto ?? '' });
+      setError(undefined);
+      if (response.response.status !== 200 && response.response.status !== 201) {
+        const error = await response.response.json();
+        const resError = Array.isArray(error.error)
+          ? error.error[0].message
+          : error.error;
+        setError(resError);
+      } else {
+        setError(undefined);
+        useFormSend.setState({ open: true });
+        formRef.current?.reset();
+        setTelefonoParseado('');
+        setTelefonoValue(undefined);
+        setTelefonoSecundarioVisible(false);
+        setSelectedCountry('');
+        setSelectedState('');
+      }
+    })
+    .catch((error) => {
+      setError(error.message);
+    });
+    // await fetch(`${expo_manager_url}/api/formulario`, {
+    //   method: 'POST',
+    //   body: JSON.stringify({
+    //     username: expo_manager_username,
+    //     password: expo_manager_password,
+    //     nombreCompleto,
+    //     telefono,
+    //     telefonoSecundario: telefonoSecundario || undefined,
+    //     dni: dni !== '' ? dni : undefined,
+    //     mail: mail !== '' ? mail : undefined,
+    //     genero: genero ?? undefined,
+    //     fechaNacimiento: fechaNacimiento ?? undefined,
+    //     instagram: instagram !== '' ? instagram : undefined,
+    //     pais: selectedCountry,
+    //     provincia: selectedState,
+    //     provinciaArgentina: selectedArgentineProvince,
+    //     localidad:
+    //       citiesData && {
+    //         nombre: citiesData.find((city) => city.nombre === selectedCity)?.nombre,
+    //         latitud: citiesData.find((city) => city.nombre === selectedCity)?.centroide.lat,
+    //         longitud: citiesData.find((city) => city.nombre === selectedCity)?.centroide.lon,
+    //       },
+    //   }),
+    // })
+    //   .then(async (response) => {
+    //     useFormData.setState({ nombreCompleto: nombreCompleto ?? '' });
+    //     setError(undefined);
+    //     if (response.status !== 200 && response.status !== 201) {
+    //       const error = await response.json();
+    //       const resError = Array.isArray(error.error)
+    //         ? error.error[0].message
+    //         : error.error;
+    //       setError(resError);
+    //     } else {
+    //       setError(undefined);
+    //       useFormSend.setState({ open: true });
+    //       formRef.current?.reset();
+    //       setTelefonoParseado('');
+    //       setTelefonoValue(undefined);
+    //       setTelefonoSecundarioVisible(false);
+    //       setSelectedCountry('');
+    //       setSelectedState('');
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     setError(error.message);
+    //   });
   }
 
   useFormSend.subscribe((state) => {
