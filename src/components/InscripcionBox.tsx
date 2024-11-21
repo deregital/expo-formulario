@@ -20,19 +20,18 @@ import {
   IState,
   State,
 } from 'country-state-city';
-import { trpc } from '@/lib/trpc';
 import { fetchClient } from '@/server/fetchClient';
 import { LocalidadesJson } from '@/server';
 import { TRPCError } from '@trpc/server';
 
 const InscripcionBox = () => {
-  const [telefonoValue, setTelefonoValue] = useState<string | undefined>('');
-  const [telefonoParseado, setTelefonoParseado] = useState<string | undefined>(
+  const [phoneNumber, setPhoneNumber] = useState<string | undefined>('');
+  const [phoneParsed, setPhoneParsed] = useState<string | undefined>(
     ''
   );
-  const [telefonoSecundarioVisible, setTelefonoSecundarioVisible] =
+  const [secondaryPhoneNumberVisible, setSecondaryPhoneNumberVisible] =
     useState(false);
-  const [telefonoSecundarioValue, setTelefonoSecundarioValue] = useState<
+  const [secondaryPhoneNumberValue, setSecondaryPhoneNumberValue] = useState<
     string | undefined
   >('');
   const [open, setOpen] = useState(false);
@@ -51,9 +50,6 @@ const InscripcionBox = () => {
   const citiesData = useMemo(() => {
     const localidades: LocalidadesJson = require('../lib/localidades.json');
     const localidadesByState = localidades.localidades.filter((localidad) => localidad.provincia.nombre === selectedArgentineProvince);
-    if (localidadesByState.length === 0) {
-      throw new TRPCError({ code: 'NOT_FOUND', message: 'No se encontraron localidades' });
-    }
     return localidadesByState.map((localidad) => {
       return {
         id: localidad.id,
@@ -74,9 +70,9 @@ const InscripcionBox = () => {
   };
 
   const toggleTelefonoSecundario = () => {
-    setTelefonoSecundarioVisible(!telefonoSecundarioVisible);
-    if (!telefonoSecundarioVisible) {
-      setTelefonoSecundarioValue('');
+    setSecondaryPhoneNumberVisible(!secondaryPhoneNumberVisible);
+    if (!secondaryPhoneNumberVisible) {
+      setSecondaryPhoneNumberValue('');
     }
   };
 
@@ -95,13 +91,13 @@ const InscripcionBox = () => {
   }, [selectedCountry]);
 
   async function handleSubmit(formData: FormData) {
-    const nombreCompleto = formData.get('nombreApellido') as string | null;
-    const telefono = telefonoParseado;
-    const telefonoSecundario = telefonoSecundarioVisible
-      ? telefonoSecundarioValue
+    const fullName = formData.get('nombreApellido') as string | null;
+    const phoneNumber = phoneParsed;
+    const secondaryPhoneNumber = secondaryPhoneNumberVisible
+      ? secondaryPhoneNumberValue
       : undefined;
     const dni = (formData.get('dni') ?? null) as string | null;
-    const genero = (formData.get('genero') ?? null) as string | null;
+    const gender = (formData.get('genero') ?? null) as string | null;
     const mail = (formData.get('mail') ?? null) as string | null;
     const fechaNacimientoString = formData.get('fechaNacimiento') as
       | string
@@ -125,18 +121,22 @@ const InscripcionBox = () => {
     const expo_manager_url = await getUrl();
     const expo_manager_username = await getUsername();
     const expo_manager_password = await getPassword();
-
-    await fetchClient.POST('/profile/create', {
+    const accessToken = "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..kHuHnC2OfXynBpqh.XX1OT_CHupVnP_5GjrNhcXqPhVM_yg9gpPdznxXnGSFigDeDR6lMOpJ1HvfChP4I337JClXy3jkL_4ilU_hPUGYmwqd2b3giAff0pk50D1FdYsLDsBz1kNv5VMgKTyd7Mg0zztlKtf9Sj4CHwYj-TMn-BwHjtxyNsqDaJ-gzotc4MiTPzelY12ySK3Sihmn8biIBaKlMAZhkv2ObTdAB3vGSRd3qPXja1O5rRmL0A6ERKBLYExK4M6tSFn65Rq7sZXnG2DYWS2u_P2WhwPGwCWaf7N4Ty52rqUQfthprJmLyi8U-sOQEdNo9ymFWvGpeV-3Aw2RDj-DL9gs3wn5sgQstBtMCJNB_l972qRp-sVlgJwnL4GB93azGnxsJPJkVDb3N5_piFfSppGVgS7Sg88qUVuusjBdA_SyTlYqwr-aEacq_tldQVH7eNhe7gLN3WwWMXgMP3h1naNx1kk6MShbUs7c31WZcudzuE5hzZl-uROGxhJLHHjvIyjZSo9xgkwzRbHNC9b5CyYShpIrR_9Y8XylMNLT4tQgD0qAZkSSCU8v6YCGI-ww6Bvf5ZmZR11RkhxrKj_AANsY-AyZUixjMXSj9gqWjQQ93pVekhxSa28dbBeTm8pEryWev5BCUuYjuLpEVn58SsDLtM-44iYE5CTZvgUdy7WRy83kE6Ger-GPLc1xerCbRZeZllo6unIyhX8dNrNUmojPnzPFAtbY7clv4jzbPwu2eJ9Mv6UCfjjSG16pTdzufCiVYM7QA6csV46pc-bOpnnE-CyXss3NiTQoPydP1htrXKzwCCeYHVV2pevMQ1V4fjb1IErg1kODUXpdMJ0RJiPCxlxO_UwBYQr-RiYhbIwAYX-4iXJb_LSrudHYv9644QI9hVUDecJZqhLv2BLmDn4oNmcdPpIV00zzEsMrQl9m5T9c7ktYhLu8r0OmuCE-Di6fukaVjmf_hUvvrh87sY00aoSLZmpaUWddmvxNSfNxjatnSL3oieTi886erfFezNzd4O9mm15Zb8UvG4479ZBqq6zYHHMjPTPBb0MX6zK0lvrYDuqkxu4HhLYx65AtRDmUCN1Wc6Ay_lZQQh7b_63O_UJy5zj0HOxyVOM7IzRD9HlnRajz2uA.t0P5Y-6nx56sGuV39jXGjg"
+    const accessToken2 = "f4bb85ae414195c78d49d59ff3877a9f4c0f7b74c9b645cf71b1c694f78aabe2%7C4e6634b5c24feca3aae57f596df1197f7736561d40ab9203e19a81bbf7600d38"
+    const { error } = await fetchClient.POST('/profile/create', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      },
       body: {
         profile: {
           birthDate: fechaNacimiento ?? null,
           dni: dni ?? null,
-          fullName: nombreCompleto ?? '',
-          gender: genero ?? null,
+          fullName: fullName ?? '',
+          gender: gender ?? null,
           instagram: instagram ?? null,
           mail: mail ?? null,
-          phoneNumber: telefono ?? '',
-          secondaryPhoneNumber: telefonoSecundario ?? null,
+          phoneNumber: phoneNumber ?? '',
+          secondaryPhoneNumber: secondaryPhoneNumber ?? null,
           alternativeNames: [],
           profilePictureUrl: null,
           residence: {
@@ -149,35 +149,50 @@ const InscripcionBox = () => {
         }
       }
     })
-    .then(async (response) => {
-      useFormData.setState({ nombreCompleto: nombreCompleto ?? '' });
-      setError(undefined);
-      if (response.response.status !== 200 && response.response.status !== 201) {
-        const error = await response.response.json();
-        const resError = Array.isArray(error.error)
-          ? error.error[0].message
-          : error.error;
-        setError(resError);
-      } else {
-        setError(undefined);
-        useFormSend.setState({ open: true });
-        formRef.current?.reset();
-        setTelefonoParseado('');
-        setTelefonoValue(undefined);
-        setTelefonoSecundarioVisible(false);
-        setSelectedCountry('');
-        setSelectedState('');
-      }
-    })
-    .catch((error) => {
-      setError(error.message);
-    });
+    useFormData.setState({ fullName: fullName ?? '' });
+    setError(undefined);
+    if (error) {
+      console.log(error.message);
+      console.log(error.error);
+      setError(error.error);
+    } else {
+      useFormSend.setState({ open: true });
+      formRef.current?.reset();
+      setPhoneParsed('');
+      setPhoneNumber(undefined);
+      setSecondaryPhoneNumberVisible(false);
+      setSelectedCountry('');
+      setSelectedState('');
+    }
+    // .then(async (response) => {
+    //   useFormData.setState({ fullName: fullName ?? '' });
+    //   setError(undefined);
+    //   if (response.response.status !== 200 && response.response.status !== 201) {
+    //     const error = await response.response.json();
+    //     const resError = Array.isArray(error.error)
+    //       ? error.error[0].message
+    //       : error.error;
+    //     setError(resError);
+    //   } else {
+    //     setError(undefined);
+    //     useFormSend.setState({ open: true });
+    //     formRef.current?.reset();
+    //     setPhoneParsed('');
+    //     setPhoneNumber(undefined);
+    //     setSecondaryPhoneNumberVisible(false);
+    //     setSelectedCountry('');
+    //     setSelectedState('');
+    //   }
+    // })
+    // .catch((error) => {
+    //   setError(error.message);
+    // });
     // await fetch(`${expo_manager_url}/api/formulario`, {
     //   method: 'POST',
     //   body: JSON.stringify({
     //     username: expo_manager_username,
     //     password: expo_manager_password,
-    //     nombreCompleto,
+    //     fullName,
     //     telefono,
     //     telefonoSecundario: telefonoSecundario || undefined,
     //     dni: dni !== '' ? dni : undefined,
@@ -197,7 +212,7 @@ const InscripcionBox = () => {
     //   }),
     // })
     //   .then(async (response) => {
-    //     useFormData.setState({ nombreCompleto: nombreCompleto ?? '' });
+    //     useFormData.setState({ fullName: fullName ?? '' });
     //     setError(undefined);
     //     if (response.status !== 200 && response.status !== 201) {
     //       const error = await response.json();
@@ -258,10 +273,10 @@ const InscripcionBox = () => {
             <PhoneInput
               placeholder="Número de Teléfono"
               international
-              value={telefonoValue}
+              value={phoneNumber}
               onChange={(value) => {
                 if (!value) {
-                  setTelefonoValue('');
+                  setPhoneNumber('');
                   return;
                 }
                 try {
@@ -274,7 +289,7 @@ const InscripcionBox = () => {
                           '9' +
                           parsed.nationalNumber
                         : value;
-                    setTelefonoParseado(telefonoCon9);
+                    setPhoneParsed(telefonoCon9);
                   }
                 } catch (error) {
                   console.log(value, error);
@@ -293,12 +308,12 @@ const InscripcionBox = () => {
                 onClick={toggleTelefonoSecundario}
                 className="text-xl font-bold hover:cursor-pointer"
                 title={
-                  telefonoSecundarioVisible
+                  secondaryPhoneNumberVisible
                     ? 'Ocultar teléfono secundario'
                     : 'Agregar teléfono secundario'
                 }
               >
-                {telefonoSecundarioVisible ? '-' : '+'}
+                {secondaryPhoneNumberVisible ? '-' : '+'}
               </button>
               <Popover open={popoverOpen}>
                 <PopoverTrigger
@@ -329,7 +344,7 @@ const InscripcionBox = () => {
             </div>
           </div>
 
-          {telefonoSecundarioVisible && (
+          {secondaryPhoneNumberVisible && (
             <div className="relative flex w-full flex-col gap-y-1.5 rounded-md border-2 border-topbar px-2 py-1">
               <p className="ml-10 text-xs text-black/50">
                 Número de teléfono secundario
@@ -337,9 +352,9 @@ const InscripcionBox = () => {
               <PhoneInput
                 placeholder="Número de Teléfono Secundario"
                 international
-                value={telefonoSecundarioValue}
+                value={secondaryPhoneNumberValue}
                 onChange={(value) => {
-                  setTelefonoSecundarioValue(value);
+                  setSecondaryPhoneNumberValue(value);
                 }}
                 defaultCountry="AR"
                 countryCallingCodeEditable={false}
