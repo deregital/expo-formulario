@@ -8,27 +8,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { getPassword, getUrl, getUsername } from '@/server/actions';
+import { LocalidadesJson } from '@/server';
+import { Country, ICountry, IState, State } from 'country-state-city';
+import { CreateProfileDto } from 'expo-backend-types';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import Image from 'next/image';
-import { useRef, useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import PhoneInput from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
-import {
-  Country,
-  ICountry,
-  IState,
-  State,
-} from 'country-state-city';
-import { fetchClient } from '@/server/fetchClient';
-import { LocalidadesJson } from '@/server';
-import { TRPCError } from '@trpc/server';
 
 const InscripcionBox = () => {
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>('');
-  const [phoneParsed, setPhoneParsed] = useState<string | undefined>(
-    ''
-  );
+  const [phoneParsed, setPhoneParsed] = useState<string | undefined>('');
   const [secondaryPhoneNumberVisible, setSecondaryPhoneNumberVisible] =
     useState(false);
   const [secondaryPhoneNumberValue, setSecondaryPhoneNumberValue] = useState<
@@ -49,13 +40,15 @@ const InscripcionBox = () => {
   const [selectedCity, setSelectedCity] = useState('');
   const citiesData = useMemo(() => {
     const localidades: LocalidadesJson = require('../lib/localidades.json');
-    const localidadesByState = localidades.localidades.filter((localidad) => localidad.provincia.nombre === selectedArgentineProvince);
+    const localidadesByState = localidades.localidades.filter(
+      (localidad) => localidad.provincia.nombre === selectedArgentineProvince
+    );
     return localidadesByState.map((localidad) => {
       return {
         id: localidad.id,
         nombre: localidad.nombre,
         centroide: localidad.centroide,
-      }
+      };
     });
   }, [selectedArgentineProvince]);
 
@@ -77,7 +70,9 @@ const InscripcionBox = () => {
   };
 
   useEffect(() => {
-    const countries = Country.getAllCountries().filter((country) => country.name !== 'Palestinian Territory Occupied');
+    const countries = Country.getAllCountries().filter(
+      (country) => country.name !== 'Palestinian Territory Occupied'
+    );
     setCountries(countries);
   }, []);
 
@@ -115,19 +110,12 @@ const InscripcionBox = () => {
             Math.abs(
               new Date(fechaNacimientoString).getTimezoneOffset() * 60000
             )
-        ).toISOString()
+        )
       : undefined;
 
-    const expo_manager_url = await getUrl();
-    const expo_manager_username = await getUsername();
-    const expo_manager_password = await getPassword();
-    const accessToken = "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..kHuHnC2OfXynBpqh.XX1OT_CHupVnP_5GjrNhcXqPhVM_yg9gpPdznxXnGSFigDeDR6lMOpJ1HvfChP4I337JClXy3jkL_4ilU_hPUGYmwqd2b3giAff0pk50D1FdYsLDsBz1kNv5VMgKTyd7Mg0zztlKtf9Sj4CHwYj-TMn-BwHjtxyNsqDaJ-gzotc4MiTPzelY12ySK3Sihmn8biIBaKlMAZhkv2ObTdAB3vGSRd3qPXja1O5rRmL0A6ERKBLYExK4M6tSFn65Rq7sZXnG2DYWS2u_P2WhwPGwCWaf7N4Ty52rqUQfthprJmLyi8U-sOQEdNo9ymFWvGpeV-3Aw2RDj-DL9gs3wn5sgQstBtMCJNB_l972qRp-sVlgJwnL4GB93azGnxsJPJkVDb3N5_piFfSppGVgS7Sg88qUVuusjBdA_SyTlYqwr-aEacq_tldQVH7eNhe7gLN3WwWMXgMP3h1naNx1kk6MShbUs7c31WZcudzuE5hzZl-uROGxhJLHHjvIyjZSo9xgkwzRbHNC9b5CyYShpIrR_9Y8XylMNLT4tQgD0qAZkSSCU8v6YCGI-ww6Bvf5ZmZR11RkhxrKj_AANsY-AyZUixjMXSj9gqWjQQ93pVekhxSa28dbBeTm8pEryWev5BCUuYjuLpEVn58SsDLtM-44iYE5CTZvgUdy7WRy83kE6Ger-GPLc1xerCbRZeZllo6unIyhX8dNrNUmojPnzPFAtbY7clv4jzbPwu2eJ9Mv6UCfjjSG16pTdzufCiVYM7QA6csV46pc-bOpnnE-CyXss3NiTQoPydP1htrXKzwCCeYHVV2pevMQ1V4fjb1IErg1kODUXpdMJ0RJiPCxlxO_UwBYQr-RiYhbIwAYX-4iXJb_LSrudHYv9644QI9hVUDecJZqhLv2BLmDn4oNmcdPpIV00zzEsMrQl9m5T9c7ktYhLu8r0OmuCE-Di6fukaVjmf_hUvvrh87sY00aoSLZmpaUWddmvxNSfNxjatnSL3oieTi886erfFezNzd4O9mm15Zb8UvG4479ZBqq6zYHHMjPTPBb0MX6zK0lvrYDuqkxu4HhLYx65AtRDmUCN1Wc6Ay_lZQQh7b_63O_UJy5zj0HOxyVOM7IzRD9HlnRajz2uA.t0P5Y-6nx56sGuV39jXGjg"
-    const accessToken2 = "f4bb85ae414195c78d49d59ff3877a9f4c0f7b74c9b645cf71b1c694f78aabe2%7C4e6634b5c24feca3aae57f596df1197f7736561d40ab9203e19a81bbf7600d38"
-    const { error } = await fetchClient.POST('/profile/create', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      },
-      body: {
+    const res = await fetch('/api/register', {
+      method: 'POST',
+      body: JSON.stringify({
         profile: {
           birthDate: fechaNacimiento ?? null,
           dni: dni ?? null,
@@ -142,17 +130,24 @@ const InscripcionBox = () => {
           residence: {
             city: selectedCity ?? '',
             country: selectedCountry ?? '',
-            latitude: citiesData?.find((city) => city.nombre === selectedCity)?.centroide.lat ?? 0,
-            longitude: citiesData?.find((city) => city.nombre === selectedCity)?.centroide.lon ?? 0,
+            latitude:
+              citiesData?.find((city) => city.nombre === selectedCity)
+                ?.centroide.lat ?? 0,
+            longitude:
+              citiesData?.find((city) => city.nombre === selectedCity)
+                ?.centroide.lon ?? 0,
             state: selectedState ?? '',
-          }
-        }
-      }
-    })
+          },
+        } satisfies CreateProfileDto['profile'],
+      }),
+    });
+
+    const error = await res.json();
+
     useFormData.setState({ fullName: fullName ?? '' });
     setError(undefined);
     if (error) {
-      console.log(error.message);
+      console.log(error);
       console.log(error.error);
       setError(error.error);
     } else {
@@ -164,76 +159,6 @@ const InscripcionBox = () => {
       setSelectedCountry('');
       setSelectedState('');
     }
-    // .then(async (response) => {
-    //   useFormData.setState({ fullName: fullName ?? '' });
-    //   setError(undefined);
-    //   if (response.response.status !== 200 && response.response.status !== 201) {
-    //     const error = await response.response.json();
-    //     const resError = Array.isArray(error.error)
-    //       ? error.error[0].message
-    //       : error.error;
-    //     setError(resError);
-    //   } else {
-    //     setError(undefined);
-    //     useFormSend.setState({ open: true });
-    //     formRef.current?.reset();
-    //     setPhoneParsed('');
-    //     setPhoneNumber(undefined);
-    //     setSecondaryPhoneNumberVisible(false);
-    //     setSelectedCountry('');
-    //     setSelectedState('');
-    //   }
-    // })
-    // .catch((error) => {
-    //   setError(error.message);
-    // });
-    // await fetch(`${expo_manager_url}/api/formulario`, {
-    //   method: 'POST',
-    //   body: JSON.stringify({
-    //     username: expo_manager_username,
-    //     password: expo_manager_password,
-    //     fullName,
-    //     telefono,
-    //     telefonoSecundario: telefonoSecundario || undefined,
-    //     dni: dni !== '' ? dni : undefined,
-    //     mail: mail !== '' ? mail : undefined,
-    //     genero: genero ?? undefined,
-    //     fechaNacimiento: fechaNacimiento ?? undefined,
-    //     instagram: instagram !== '' ? instagram : undefined,
-    //     pais: selectedCountry,
-    //     provincia: selectedState,
-    //     provinciaArgentina: selectedArgentineProvince,
-    //     localidad:
-    //       citiesData && {
-    //         nombre: citiesData.find((city) => city.nombre === selectedCity)?.nombre,
-    //         latitud: citiesData.find((city) => city.nombre === selectedCity)?.centroide.lat,
-    //         longitud: citiesData.find((city) => city.nombre === selectedCity)?.centroide.lon,
-    //       },
-    //   }),
-    // })
-    //   .then(async (response) => {
-    //     useFormData.setState({ fullName: fullName ?? '' });
-    //     setError(undefined);
-    //     if (response.status !== 200 && response.status !== 201) {
-    //       const error = await response.json();
-    //       const resError = Array.isArray(error.error)
-    //         ? error.error[0].message
-    //         : error.error;
-    //       setError(resError);
-    //     } else {
-    //       setError(undefined);
-    //       useFormSend.setState({ open: true });
-    //       formRef.current?.reset();
-    //       setTelefonoParseado('');
-    //       setTelefonoValue(undefined);
-    //       setTelefonoSecundarioVisible(false);
-    //       setSelectedCountry('');
-    //       setSelectedState('');
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     setError(error.message);
-    //   });
   }
 
   useFormSend.subscribe((state) => {
