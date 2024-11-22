@@ -8,8 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { LocalidadesJson } from '@/server';
-import { Country, ICountry, IState, State } from 'country-state-city';
+import { Country, ICountry, IState, State, City } from 'country-state-city';
 import { CreateProfileDto } from 'expo-backend-types';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import Image from 'next/image';
@@ -38,19 +37,11 @@ const InscripcionBox = () => {
   const [selectedArgentineProvince, setSelectedArgentineProvince] =
     useState('');
   const [selectedCity, setSelectedCity] = useState('');
-  const citiesData = useMemo(() => {
-    const localidades: LocalidadesJson = require('../lib/localidades.json');
-    const localidadesByState = localidades.localidades.filter(
-      (localidad) => localidad.provincia.nombre === selectedArgentineProvince
-    );
-    return localidadesByState.map((localidad) => {
-      return {
-        id: localidad.id,
-        nombre: localidad.nombre,
-        centroide: localidad.centroide,
-      };
-    });
-  }, [selectedArgentineProvince]);
+  const [citiesData, setCitiesData] = useState<Array<{
+    id: string;
+    name: string;
+    centroid: { lat: number; lon: number };
+  }>>([]);
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -84,6 +75,26 @@ const InscripcionBox = () => {
     }
     setSelectedState('');
   }, [selectedCountry]);
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      if (!selectedArgentineProvince) return;
+      
+      try {
+        const response = await fetch('/api/location', {
+          method: 'POST',
+          body: JSON.stringify({ argState: selectedArgentineProvince }),
+        });
+        const data = await response.json();
+        setCitiesData(Array.isArray(data.cities) ? data.cities : []);
+      } catch (error) {
+        console.error('Error fetching cities:', error);
+        setCitiesData([]);
+      }
+    };
+
+    fetchCities();
+  }, [selectedArgentineProvince]);
 
   async function handleSubmit(formData: FormData) {
     const fullName = formData.get('nombreApellido') as string | null;
@@ -131,12 +142,23 @@ const InscripcionBox = () => {
             city: selectedCity ?? '',
             country: selectedCountry ?? '',
             latitude:
-              citiesData?.find((city) => city.nombre === selectedCity)
-                ?.centroide.lat ?? 0,
+              Number(City.getAllCities().find((city) => city.name === selectedCity)
+                ?.latitude) ?? 0,
             longitude:
-              citiesData?.find((city) => city.nombre === selectedCity)
-                ?.centroide.lon ?? 0,
+              Number(City.getAllCities().find((city) => city.name === selectedCity)
+                ?.longitude) ?? 0,
             state: selectedState ?? '',
+          },
+          birth: {
+            city: selectedCity ?? '',
+            country: selectedCountry ?? '',
+            state: selectedState ?? '',
+            latitude:
+              Number(citiesData?.find((city) => city.name === selectedCity)
+                ?.centroid.lat) ?? 0,
+            longitude:
+              Number(citiesData?.find((city) => city.name === selectedCity)
+                ?.centroid.lon) ?? 0,
           },
         } satisfies CreateProfileDto['profile'],
       }),
@@ -431,11 +453,11 @@ const InscripcionBox = () => {
                 {citiesData &&
                   citiesData
                     .sort((a, b) => {
-                      return a.nombre.localeCompare(b.nombre);
+                      return a.name.localeCompare(b.name);
                     })
                     .map((city) => (
-                      <option key={city.id} value={city.nombre}>
-                        {city.nombre}
+                      <option key={city.id} value={city.name}>
+                        {city.name}
                       </option>
                     ))}
               </select>
