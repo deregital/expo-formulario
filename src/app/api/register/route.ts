@@ -6,7 +6,13 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
     const dataPost = await req.json();
-    const parsedData = createProfileSchema.parse(dataPost);
+    const { success, data: parsedData, error: zodError } = createProfileSchema.safeParse(dataPost);
+
+    if (!success) {
+      const messageString = zodError.errors[0].message;
+
+      return NextResponse.json({ error: messageString }, { status: 400 });
+    }
 
     const {
       profile
