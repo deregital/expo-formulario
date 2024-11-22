@@ -58,6 +58,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
           alternativeNames: [],
           profilePictureUrl: null,
           residence: residence,
+          birth: birth,
         },
       },
     });

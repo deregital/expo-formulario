@@ -27,8 +27,24 @@ const InscripcionBox = () => {
   const [open, setOpen] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
-  const [countries, setCountries] = useState<Array<{ name: string; isoCode: string, latitude: string, longitude: string }>>([]);
-  const [states, setStates] = useState<Array<{ name: string; isoCode: string, countryCode: string, countryName: string, latitude: string, longitude: string }>>([]);
+  const [countries, setCountries] = useState<
+    Array<{
+      name: string;
+      isoCode: string;
+      latitude: string;
+      longitude: string;
+    }>
+  >([]);
+  const [states, setStates] = useState<
+    Array<{
+      name: string;
+      isoCode: string;
+      countryCode: string;
+      countryName: string;
+      latitude: string;
+      longitude: string;
+    }>
+  >([]);
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedState, setSelectedState] = useState('');
   const [argentineProvinces, setArgentineProvinces] = useState<
@@ -37,11 +53,13 @@ const InscripcionBox = () => {
   const [selectedArgentineProvince, setSelectedArgentineProvince] =
     useState('');
   const [selectedCity, setSelectedCity] = useState('');
-  const [citiesData, setCitiesData] = useState<Array<{
-    id: string;
-    name: string;
-    centroid: { lat: number; lon: number };
-  }>>([]);
+  const [citiesData, setCitiesData] = useState<
+    Array<{
+      id: string;
+      name: string;
+      centroid: { lat: number; lon: number };
+    }>
+  >([]);
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -83,7 +101,7 @@ const InscripcionBox = () => {
       const fetchStates = async () => {
         const response = await fetch('/api/location/states', {
           method: 'POST',
-          body: JSON.stringify({ countryCode: selectedCountry })
+          body: JSON.stringify({ countryCode: selectedCountry }),
         });
         const data = await response.json();
         setStates(data.dataGetStates);
@@ -98,7 +116,7 @@ const InscripcionBox = () => {
   useEffect(() => {
     const fetchCities = async () => {
       if (!selectedArgentineProvince) return;
-      
+
       try {
         const response = await fetch('/api/location', {
           method: 'POST',
@@ -143,6 +161,14 @@ const InscripcionBox = () => {
         )
       : undefined;
 
+    const birthState = states.find((state) => state.isoCode === selectedState);
+    const birthCountry = countries.find(
+      (country) => country.isoCode === selectedCountry
+    );
+    const residenceCity = citiesData?.find(
+      (city) => city.name === selectedCity
+    );
+
     const res = await fetch('/api/register', {
       method: 'POST',
       body: JSON.stringify({
@@ -160,24 +186,16 @@ const InscripcionBox = () => {
           residence: {
             city: selectedCity ?? '',
             country: 'Argentina',
-            latitude:
-              Number(citiesData?.find((city) => city.name === selectedCity)
-                ?.centroid.lat) ?? 0,
-            longitude:
-              Number(citiesData?.find((city) => city.name === selectedCity)
-                ?.centroid.lon) ?? 0,
+            latitude: Number(residenceCity?.centroid.lat) ?? 0,
+            longitude: Number(residenceCity?.centroid.lon) ?? 0,
             state: selectedArgentineProvince ?? '',
           },
           birth: {
-            city: 'Nada',
-            country: selectedCountry ?? '',
-            state: selectedState ?? '',
-            latitude:
-              Number(states?.find((state) => state.isoCode === selectedState)
-                ?.latitude) ?? 0,
-            longitude:
-              Number(states?.find((state) => state.isoCode === selectedState)
-                ?.longitude) ?? 0,
+            city: birthState?.name ?? '',
+            country: birthCountry?.name ?? '',
+            state: '',
+            latitude: Number(birthState?.latitude),
+            longitude: Number(birthState?.longitude),
           },
         } satisfies CreateProfileDto['profile'],
       }),
