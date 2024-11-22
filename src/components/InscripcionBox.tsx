@@ -27,13 +27,13 @@ const InscripcionBox = () => {
   const [open, setOpen] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
-  const [countries, setCountries] = useState<NonNullable<ICountry[]>>([]);
-  const [states, setStates] = useState<NonNullable<IState[]>>([]);
+  const [countries, setCountries] = useState<Array<{ name: string; isoCode: string, latitude: string, longitude: string }>>([]);
+  const [states, setStates] = useState<Array<{ name: string; isoCode: string, countryCode: string, countryName: string, latitude: string, longitude: string }>>([]);
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedState, setSelectedState] = useState('');
   const [argentineProvinces, setArgentineProvinces] = useState<
-    NonNullable<IState[]>
-  >(State.getStatesOfCountry('AR'));
+    NonNullable<string[]>
+  >([]);
   const [selectedArgentineProvince, setSelectedArgentineProvince] =
     useState('');
   const [selectedCity, setSelectedCity] = useState('');
@@ -61,15 +61,34 @@ const InscripcionBox = () => {
   };
 
   useEffect(() => {
-    const countries = Country.getAllCountries().filter(
-      (country) => country.name !== 'Palestinian Territory Occupied'
-    );
-    setCountries(countries);
+    const fetchCountries = async () => {
+      const response = await fetch('/api/location/countries');
+      const data = await response.json();
+      setCountries(data.dataGetCountries);
+    };
+    fetchCountries();
+  }, []);
+
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      const response = await fetch('/api/location/provinces');
+      const data = await response.json();
+      setArgentineProvinces(data.dataGetProvinces);
+    };
+    fetchProvinces();
   }, []);
 
   useEffect(() => {
     if (selectedCountry) {
-      setStates(State.getStatesOfCountry(selectedCountry));
+      const fetchStates = async () => {
+        const response = await fetch('/api/location/states', {
+          method: 'POST',
+          body: JSON.stringify({ countryCode: selectedCountry })
+        });
+        const data = await response.json();
+        setStates(data.dataGetStates);
+      };
+      fetchStates();
     } else {
       setStates([]);
     }
@@ -140,38 +159,36 @@ const InscripcionBox = () => {
           profilePictureUrl: null,
           residence: {
             city: selectedCity ?? '',
-            country: selectedCountry ?? '',
-            latitude:
-              Number(City.getAllCities().find((city) => city.name === selectedCity)
-                ?.latitude) ?? 0,
-            longitude:
-              Number(City.getAllCities().find((city) => city.name === selectedCity)
-                ?.longitude) ?? 0,
-            state: selectedState ?? '',
-          },
-          birth: {
-            city: selectedCity ?? '',
-            country: selectedCountry ?? '',
-            state: selectedState ?? '',
+            country: 'Argentina',
             latitude:
               Number(citiesData?.find((city) => city.name === selectedCity)
                 ?.centroid.lat) ?? 0,
             longitude:
               Number(citiesData?.find((city) => city.name === selectedCity)
                 ?.centroid.lon) ?? 0,
+            state: selectedArgentineProvince ?? '',
+          },
+          birth: {
+            city: 'Nada',
+            country: selectedCountry ?? '',
+            state: selectedState ?? '',
+            latitude:
+              Number(states?.find((state) => state.isoCode === selectedState)
+                ?.latitude) ?? 0,
+            longitude:
+              Number(states?.find((state) => state.isoCode === selectedState)
+                ?.longitude) ?? 0,
           },
         } satisfies CreateProfileDto['profile'],
       }),
     });
 
-    const error = await res.json();
+    const response = await res.json();
 
     useFormData.setState({ fullName: fullName ?? '' });
     setError(undefined);
-    if (error) {
-      console.log(error);
-      console.log(error.error);
-      setError(error.error);
+    if (response.error) {
+      setError(response.error);
     } else {
       useFormSend.setState({ open: true });
       formRef.current?.reset();
@@ -180,6 +197,8 @@ const InscripcionBox = () => {
       setSecondaryPhoneNumberVisible(false);
       setSelectedCountry('');
       setSelectedState('');
+      setSelectedArgentineProvince('');
+      setSelectedCity('');
     }
   }
 
@@ -434,8 +453,8 @@ const InscripcionBox = () => {
               >
                 <option value="">Selecciona tu provincia</option>
                 {argentineProvinces.map((province) => (
-                  <option key={province.isoCode} value={province.name}>
-                    {province.name}
+                  <option key={province} value={province}>
+                    {province}
                   </option>
                 ))}
               </select>

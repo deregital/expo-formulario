@@ -4,7 +4,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
-    const dataPost = await req.json();
+    const body = await req.json();
+    const { countryCode } = body;
+
     const expo_manager_username = await getUsername();
     const expo_manager_password = await getPassword();
 
@@ -24,25 +26,24 @@ export async function POST(req: NextRequest, res: NextResponse) {
       return NextResponse.json({ error: messageString }, { status: errorLogin.statusCode });
     }
 
-    const { error: errorGetCities, data: dataGetCities } = await fetchClient.GET('/location/find-cities-by-arg-state/{argState}', {
-      params: {
-        path: {
-          argState: dataPost.argState
-        }
-      },
+    const { data: dataGetStates, error: errorGetStates } = await fetchClient.GET('/location/states-by-country/{countryCode}', {
       headers: {
         Authorization: `Bearer ${dataLogin?.backendTokens.accessToken}`,
       },
-    });
+      params: {
+        path: {
+          countryCode: countryCode
+        }
+      }
+    })
 
-    if (errorGetCities) {
-      const messageString = errorGetCities.message[0]
-
-      return NextResponse.json({ error: messageString }, { status: errorGetCities.statusCode });
+    if (errorGetStates) {
+      const messageString = errorGetStates.message[0]
+      return NextResponse.json({ error: messageString }, { status: errorGetStates.statusCode });
     }
 
     return NextResponse.json({
-      cities: dataGetCities.cities
+      dataGetStates: dataGetStates?.states
     });
 
   } catch (error) {
