@@ -1,5 +1,4 @@
 import Logo from '@/components/Logo';
-import Image from 'next/image';
 
 const TopBar = () => {
   return (

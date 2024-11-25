@@ -8,11 +8,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Country, ICountry, IState, State, City } from 'country-state-city';
 import { CreateProfileDto } from 'expo-backend-types';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import Image from 'next/image';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import PhoneInput from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
 
