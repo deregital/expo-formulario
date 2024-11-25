@@ -8,49 +8,57 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { getPassword, getUrl, getUsername } from '@/server/actions';
+import { CreateProfileDto } from 'expo-backend-types';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import Image from 'next/image';
-import { useRef, useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import PhoneInput from 'react-phone-number-input';
 import svgHelp from '../../public/help_expodesfiles.svg';
-import {
-  Country,
-  ICountry,
-  IState,
-  State,
-} from 'country-state-city';
-import { trpc } from '@/lib/trpc';
 
 const InscripcionBox = () => {
-  const [telefonoValue, setTelefonoValue] = useState<string | undefined>('');
-  const [telefonoParseado, setTelefonoParseado] = useState<string | undefined>(
-    ''
-  );
-  const [telefonoSecundarioVisible, setTelefonoSecundarioVisible] =
+  const [phoneNumber, setPhoneNumber] = useState<string | undefined>('');
+  const [phoneParsed, setPhoneParsed] = useState<string | undefined>('');
+  const [secondaryPhoneNumberVisible, setSecondaryPhoneNumberVisible] =
     useState(false);
-  const [telefonoSecundarioValue, setTelefonoSecundarioValue] = useState<
+  const [secondaryPhoneNumberValue, setSecondaryPhoneNumberValue] = useState<
     string | undefined
   >('');
   const [open, setOpen] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
-  const [countries, setCountries] = useState<NonNullable<ICountry[]>>([]);
-  const [states, setStates] = useState<NonNullable<IState[]>>([]);
+  const [countries, setCountries] = useState<
+    Array<{
+      name: string;
+      isoCode: string;
+      latitude: string;
+      longitude: string;
+    }>
+  >([]);
+  const [states, setStates] = useState<
+    Array<{
+      name: string;
+      isoCode: string;
+      countryCode: string;
+      countryName: string;
+      latitude: string;
+      longitude: string;
+    }>
+  >([]);
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedState, setSelectedState] = useState('');
   const [argentineProvinces, setArgentineProvinces] = useState<
-    NonNullable<IState[]>
-  >(State.getStatesOfCountry('AR'));
+    NonNullable<string[]>
+  >([]);
   const [selectedArgentineProvince, setSelectedArgentineProvince] =
     useState('');
   const [selectedCity, setSelectedCity] = useState('');
-  const { data: citiesData } = trpc.localidades.getLocalidadesByState.useQuery(
-    selectedArgentineProvince,
-    {
-      enabled: !!selectedArgentineProvince,
-    }
-  );
+  const [citiesData, setCitiesData] = useState<
+    Array<{
+      id: string;
+      name: string;
+      centroid: { lat: number; lon: number };
+    }>
+  >([]);
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -63,34 +71,75 @@ const InscripcionBox = () => {
   };
 
   const toggleTelefonoSecundario = () => {
-    setTelefonoSecundarioVisible(!telefonoSecundarioVisible);
-    if (!telefonoSecundarioVisible) {
-      setTelefonoSecundarioValue('');
+    setSecondaryPhoneNumberVisible(!secondaryPhoneNumberVisible);
+    if (!secondaryPhoneNumberVisible) {
+      setSecondaryPhoneNumberValue('');
     }
   };
 
   useEffect(() => {
-    const countries = Country.getAllCountries().filter((country) => country.name !== 'Palestinian Territory Occupied');
-    setCountries(countries);
+    const fetchCountries = async () => {
+      const response = await fetch('/api/location/countries');
+      const data = await response.json();
+      setCountries(data.dataGetCountries);
+    };
+    fetchCountries();
+  }, []);
+
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      const response = await fetch('/api/location/provinces');
+      const data = await response.json();
+      setArgentineProvinces(data.dataGetProvinces);
+    };
+    fetchProvinces();
   }, []);
 
   useEffect(() => {
     if (selectedCountry) {
-      setStates(State.getStatesOfCountry(selectedCountry));
+      const fetchStates = async () => {
+        const response = await fetch('/api/location/states', {
+          method: 'POST',
+          body: JSON.stringify({ countryCode: selectedCountry }),
+        });
+        const data = await response.json();
+        setStates(data.dataGetStates);
+      };
+      fetchStates();
     } else {
       setStates([]);
     }
     setSelectedState('');
   }, [selectedCountry]);
 
+  useEffect(() => {
+    const fetchCities = async () => {
+      if (!selectedArgentineProvince) return;
+
+      try {
+        const response = await fetch('/api/location', {
+          method: 'POST',
+          body: JSON.stringify({ argState: selectedArgentineProvince }),
+        });
+        const data = await response.json();
+        setCitiesData(Array.isArray(data.cities) ? data.cities : []);
+      } catch (error) {
+        console.error('Error fetching cities:', error);
+        setCitiesData([]);
+      }
+    };
+
+    fetchCities();
+  }, [selectedArgentineProvince]);
+
   async function handleSubmit(formData: FormData) {
-    const nombreCompleto = formData.get('nombreApellido') as string | null;
-    const telefono = telefonoParseado;
-    const telefonoSecundario = telefonoSecundarioVisible
-      ? telefonoSecundarioValue
+    const fullName = formData.get('nombreApellido') as string | null;
+    const phoneNumber = phoneParsed;
+    const secondaryPhoneNumber = secondaryPhoneNumberVisible
+      ? secondaryPhoneNumberValue
       : undefined;
     const dni = (formData.get('dni') ?? null) as string | null;
-    const genero = (formData.get('genero') ?? null) as string | null;
+    const gender = (formData.get('genero') ?? null) as string | null;
     const mail = (formData.get('mail') ?? null) as string | null;
     const fechaNacimientoString = formData.get('fechaNacimiento') as
       | string
@@ -108,60 +157,66 @@ const InscripcionBox = () => {
             Math.abs(
               new Date(fechaNacimientoString).getTimezoneOffset() * 60000
             )
-        ).toISOString()
+        )
       : undefined;
 
-    const expo_manager_url = await getUrl();
-    const expo_manager_username = await getUsername();
-    const expo_manager_password = await getPassword();
+    const birthState = states.find((state) => state.isoCode === selectedState);
+    const birthCountry = countries.find(
+      (country) => country.isoCode === selectedCountry
+    );
+    const residenceCity = citiesData?.find(
+      (city) => city.name === selectedCity
+    );
 
-    await fetch(`${expo_manager_url}/api/formulario`, {
+    const res = await fetch('/api/register', {
       method: 'POST',
       body: JSON.stringify({
-        username: expo_manager_username,
-        password: expo_manager_password,
-        nombreCompleto,
-        telefono,
-        telefonoSecundario: telefonoSecundario || undefined,
-        dni: dni !== '' ? dni : undefined,
-        mail: mail !== '' ? mail : undefined,
-        genero: genero ?? undefined,
-        fechaNacimiento: fechaNacimiento ?? undefined,
-        instagram: instagram !== '' ? instagram : undefined,
-        pais: selectedCountry,
-        provincia: selectedState,
-        provinciaArgentina: selectedArgentineProvince,
-        localidad:
-          citiesData && {
-            nombre: citiesData.find((city) => city.nombre === selectedCity)?.nombre,
-            latitud: citiesData.find((city) => city.nombre === selectedCity)?.centroide.lat,
-            longitud: citiesData.find((city) => city.nombre === selectedCity)?.centroide.lon,
+        profile: {
+          birthDate: fechaNacimiento ?? null,
+          dni: dni ?? null,
+          fullName: fullName ?? '',
+          gender: gender ?? null,
+          instagram: instagram ?? null,
+          mail: mail ?? null,
+          phoneNumber: phoneNumber ?? '',
+          secondaryPhoneNumber: secondaryPhoneNumber ?? null,
+          alternativeNames: [],
+          profilePictureUrl: null,
+          residence: {
+            city: selectedCity ?? '',
+            country: 'Argentina',
+            latitude: Number(residenceCity?.centroid.lat) ?? 0,
+            longitude: Number(residenceCity?.centroid.lon) ?? 0,
+            state: selectedArgentineProvince ?? '',
           },
+          birth: {
+            city: birthState?.name ?? '',
+            country: birthCountry?.name ?? '',
+            state: '',
+            latitude: Number(birthState?.latitude),
+            longitude: Number(birthState?.longitude),
+          },
+        } satisfies CreateProfileDto['profile'],
       }),
-    })
-      .then(async (response) => {
-        useFormData.setState({ nombreCompleto: nombreCompleto ?? '' });
-        setError(undefined);
-        if (response.status !== 200 && response.status !== 201) {
-          const error = await response.json();
-          const resError = Array.isArray(error.error)
-            ? error.error[0].message
-            : error.error;
-          setError(resError);
-        } else {
-          setError(undefined);
-          useFormSend.setState({ open: true });
-          formRef.current?.reset();
-          setTelefonoParseado('');
-          setTelefonoValue(undefined);
-          setTelefonoSecundarioVisible(false);
-          setSelectedCountry('');
-          setSelectedState('');
-        }
-      })
-      .catch((error) => {
-        setError(error.message);
-      });
+    });
+
+    const response = await res.json();
+
+    useFormData.setState({ fullName: fullName ?? '' });
+    setError(undefined);
+    if (response.error) {
+      setError(response.error);
+    } else {
+      useFormSend.setState({ open: true });
+      formRef.current?.reset();
+      setPhoneParsed('');
+      setPhoneNumber(undefined);
+      setSecondaryPhoneNumberVisible(false);
+      setSelectedCountry('');
+      setSelectedState('');
+      setSelectedArgentineProvince('');
+      setSelectedCity('');
+    }
   }
 
   useFormSend.subscribe((state) => {
@@ -201,10 +256,10 @@ const InscripcionBox = () => {
             <PhoneInput
               placeholder="Número de Teléfono"
               international
-              value={telefonoValue}
+              value={phoneNumber}
               onChange={(value) => {
                 if (!value) {
-                  setTelefonoValue('');
+                  setPhoneNumber('');
                   return;
                 }
                 try {
@@ -217,7 +272,7 @@ const InscripcionBox = () => {
                           '9' +
                           parsed.nationalNumber
                         : value;
-                    setTelefonoParseado(telefonoCon9);
+                    setPhoneParsed(telefonoCon9);
                   }
                 } catch (error) {
                   console.log(value, error);
@@ -236,12 +291,12 @@ const InscripcionBox = () => {
                 onClick={toggleTelefonoSecundario}
                 className="text-xl font-bold hover:cursor-pointer"
                 title={
-                  telefonoSecundarioVisible
+                  secondaryPhoneNumberVisible
                     ? 'Ocultar teléfono secundario'
                     : 'Agregar teléfono secundario'
                 }
               >
-                {telefonoSecundarioVisible ? '-' : '+'}
+                {secondaryPhoneNumberVisible ? '-' : '+'}
               </button>
               <Popover open={popoverOpen}>
                 <PopoverTrigger
@@ -272,7 +327,7 @@ const InscripcionBox = () => {
             </div>
           </div>
 
-          {telefonoSecundarioVisible && (
+          {secondaryPhoneNumberVisible && (
             <div className="relative flex w-full flex-col gap-y-1.5 rounded-md border-2 border-topbar px-2 py-1">
               <p className="ml-10 text-xs text-black/50">
                 Número de teléfono secundario
@@ -280,9 +335,9 @@ const InscripcionBox = () => {
               <PhoneInput
                 placeholder="Número de Teléfono Secundario"
                 international
-                value={telefonoSecundarioValue}
+                value={secondaryPhoneNumberValue}
                 onChange={(value) => {
-                  setTelefonoSecundarioValue(value);
+                  setSecondaryPhoneNumberValue(value);
                 }}
                 defaultCountry="AR"
                 countryCallingCodeEditable={false}
@@ -415,8 +470,8 @@ const InscripcionBox = () => {
               >
                 <option value="">Selecciona tu provincia</option>
                 {argentineProvinces.map((province) => (
-                  <option key={province.isoCode} value={province.name}>
-                    {province.name}
+                  <option key={province} value={province}>
+                    {province}
                   </option>
                 ))}
               </select>
@@ -434,11 +489,11 @@ const InscripcionBox = () => {
                 {citiesData &&
                   citiesData
                     .sort((a, b) => {
-                      return a.nombre.localeCompare(b.nombre);
+                      return a.name.localeCompare(b.name);
                     })
                     .map((city) => (
-                      <option key={city.id} value={city.nombre}>
-                        {city.nombre}
+                      <option key={city.id} value={city.name}>
+                        {city.name}
                       </option>
                     ))}
               </select>

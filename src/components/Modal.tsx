@@ -10,8 +10,8 @@ import { create } from 'zustand';
 
 interface ModalProps {}
 
-export const useFormData = create<{ nombreCompleto: string }>(() => ({
-  nombreCompleto: '',
+export const useFormData = create<{ fullName: string }>(() => ({
+  fullName: '',
 }));
 
 export const useFormSend = create(() => ({
@@ -65,7 +65,7 @@ const Modal = ({}: ModalProps) => {
           <button
             onClick={() =>
               window.open(
-                `https://wa.me/541135208230?text=Hola,%20soy%20${encodeURIComponent(useFormData.getState().nombreCompleto)},%20Quiero%20Participar%20en%20Expo%20Desfiles.`,
+                `https://wa.me/541135208230?text=Hola,%20soy%20${encodeURIComponent(useFormData.getState().fullName)},%20Quiero%20Participar%20en%20Expo%20Desfiles.`,
                 '_blank'
               )
             }
