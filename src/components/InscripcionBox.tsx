@@ -483,7 +483,7 @@ const InscripcionBox = () => {
                 onChange={(e) => setSelectedCity(e.target.value)}
                 className="w-full rounded-md border-2 border-topbar p-2 md:w-[48%]"
                 disabled={!selectedArgentineProvince}
-                required={selectedCity !== ''}
+                required={selectedCity === ''}
               >
                 <option value="">Selecciona tu localidad</option>
                 {citiesData &&
