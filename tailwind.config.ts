@@ -18,7 +18,18 @@ const config = {
       },
     },
     extend: {
+      screens: {
+        "mobileMd": "375px",
+        "mobileLg": "425px",
+        "mobileXl": "520px",
+        "2xl": "1400px",
+      },
+      fontFamily: {
+        'bodoni': ['Libre Bodoni', 'serif'],
+        'poppins': ['Poppins', 'sans-serif'],
+      },
       colors: {
+        'topbar': '#8C355E',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

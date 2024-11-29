@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-import Provider from '@/app/_trpc/Provider';
-import { cn } from '@/lib/utils';
+import { poppinsFont } from '@/lib/fonts';
 
-const inter = Inter({ subsets: ['latin'] });
+import './globals.css';
+import TopBar from '@/components/TopBar';
+import MainLayout from '@/components/mainLayout';
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'Expo formulario',
@@ -18,8 +18,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn('bg-slate-800', inter.className)}>
-        <Provider>{children}</Provider>
+      <body
+        className={cn(
+          'relative h-auto min-h-screen w-screen overflow-y-auto overflow-x-hidden',
+          poppinsFont.className
+        )}
+      >
+        <TopBar />
+        <MainLayout>{children}</MainLayout>
       </body>
     </html>
   );

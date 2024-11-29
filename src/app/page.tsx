@@ -1,28 +1,18 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { trpc } from '@/lib/trpc';
-import Link from 'next/link';
+import Information from '@/components/Information';
+import InscripcionBox from '@/components/InscripcionBox';
+import React from 'react';
+import 'react-phone-number-input/style.css';
+import './globals.css';
 
-export default function Home() {
-  const { data, isLoading} = trpc.hello.useQuery({
-    text: 'world',
-  });
+const Home: React.FC = () => {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-evenly p-24">
-      <Button>Hola, soy un botón 👮</Button>
-      {isLoading ? (
-        <p className="text-white">Cargando saludo...</p>
-      ) : (
-        <p className="text-white">{data?.greeting}</p>
-      )}
-      <Button variant="outline" asChild>
-        <Link href={'/users'}>
-          Soy un botón secundario que te lleva a la página de usuarios
-        </Link>
-      </Button>
-    </main>
+    <div className="mx-auto max-w-[800px]">
+      <Information />
+      <InscripcionBox />
+    </div>
   );
-}
+};
 
-
+export default Home;
