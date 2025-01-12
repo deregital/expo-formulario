@@ -363,6 +363,7 @@ const InscripcionBox = () => {
             <p className="ml-2 text-xs text-black/50">Fecha de Nacimiento</p>
             <input
               type="date"
+              max={new Date().toISOString().split('T')[0]}
               name="fechaNacimiento"
               id="fechaNacimiento"
               className="w-full rounded-md border-none p-1 text-sm"
@@ -424,7 +425,7 @@ const InscripcionBox = () => {
                 required
               >
                 <option value="">Selecciona tu país</option>
-                {countries.map((country) => (
+                {countries?.map((country) => (
                   <option key={country.isoCode} value={country.isoCode}>
                     {country.name}
                   </option>
@@ -469,7 +470,7 @@ const InscripcionBox = () => {
                 required
               >
                 <option value="">Selecciona tu provincia</option>
-                {argentineProvinces.map((province) => (
+                {argentineProvinces?.map((province) => (
                   <option key={province} value={province}>
                     {province}
                   </option>
