@@ -172,7 +172,10 @@ const InscripcionBox = () => {
       method: 'POST',
       body: JSON.stringify({
         profile: {
-          birthDate: fechaNacimiento ?? null,
+          username: null,
+          password: null,
+
+          birthDate: fechaNacimiento?.toISOString() ?? null,
           dni: dni ?? null,
           fullName: fullName ?? '',
           gender: gender ?? null,
